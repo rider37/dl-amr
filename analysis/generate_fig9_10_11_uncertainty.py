@@ -4,6 +4,7 @@ Regenerate uncertainty validation figures for the paper.
 - Serif fonts, 300 DPI
 """
 import os
+import sys
 import numpy as np
 import pandas as pd
 import torch
@@ -11,6 +12,9 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, roc_auc_score
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from _data_check import require_or_skip
 
 # Publication style — moderate font sizes
 plt.rcParams.update({
@@ -35,10 +39,18 @@ plt.rcParams.update({
 })
 
 ROOT = os.environ.get('DL_AMR_ROOT', os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
-DATA_DIR = f'{ROOT}/eval/figures/uncertainty_nll_uvp_wake'
-OUT_DIR = f'{ROOT}/paper/fig'
-PRED_DIR = f'{ROOT}/ml/runs/infer_delta_hetero_star_uvp_wake_re100_150_nll_lr3e4_test/preds'
-DATA_PT = f'{ROOT}/ml/data/processed/cylinder_delta_star_uvp_wake_re100_150/test.pt'
+DATA_DIR = os.environ.get('DL_AMR_DATA', os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'reference_data'))
+OUT_DIR = os.environ.get('DL_AMR_OUTDIR', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'output'))
+PRED_DIR = os.environ.get('DL_AMR_PREDS', os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'reference_data', 'preds'))
+DATA_PT = os.environ.get('DL_AMR_TESTPT', os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'reference_data', 'test.pt'))
+os.makedirs(OUT_DIR, exist_ok=True)
+
+require_or_skip(
+    'Figs 9, 10, 11 (uncertainty validation)',
+    'Run `make download-reference` to fetch test.pt and per-sample predictions, '
+    'or set DL_AMR_TESTPT / DL_AMR_PREDS to point at your own copies.',
+    DATA_PT, PRED_DIR, f'{DATA_DIR}/calibration_bins.csv',
+)
 
 # Load CSV data
 cal = pd.read_csv(f'{DATA_DIR}/calibration_bins.csv')

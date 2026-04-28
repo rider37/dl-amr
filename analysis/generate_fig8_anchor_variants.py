@@ -46,9 +46,9 @@ GEOMETRIES = {
     'diamond_Re150':  {'title': 'Diamond ($Re=150$)',  'shape': 'diamond'},
 }
 CASES = {
-    'fine':     '',
-    'dl_amr':   '_coarse_amr_dl_uvp_wake_nll',
-    'grad_amr': '_coarse_amr_vorticity',
+    'fine':     'fine',
+    'dl_amr':   'dl_amr',
+    'grad_amr': 'grad_amr',
 }
 
 GRAD_BEST_TIMES = {
@@ -67,7 +67,7 @@ YLIM = (-2.5, 2.5)
 
 
 def case_dir(geom, key):
-    return os.path.join(BASE, geom + CASES[key])
+    return os.path.join(BASE, geom, CASES[key])
 
 
 def add_obstacle(ax, shape, half_size=0.5):
@@ -292,6 +292,17 @@ def generate_fig(matched, vmin, vmax, label):
 
 
 if __name__ == '__main__':
+    import sys
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from _data_check import require_or_skip
+    require_or_skip(
+        'Fig 8 (anchor-time variants)',
+        'Run the OpenFOAM cases (e.g. `cd cases/circular_Re200/fine && ./Allrun`) '
+        'or download a pre-computed case bundle into cases/ from Zenodo.',
+        os.path.join(BASE, 'circular_Re200', 'fine', 'postProcessing',
+                     'forceCoeffs', '0', 'coefficient.dat'),
+    )
+
     variants = [
         ('A_fine_anchor', 'fine'),
         ('B1_square_t210', 'grad_b1'),

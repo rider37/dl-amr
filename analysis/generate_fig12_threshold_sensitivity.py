@@ -5,11 +5,15 @@ Sweep threshold values and compute:
 - Estimated cell count (proportional)
 """
 import os
+import sys
 import numpy as np
 import torch
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from _data_check import require_or_skip
 
 plt.rcParams.update({
     'font.family': 'serif',
@@ -31,9 +35,17 @@ plt.rcParams.update({
 })
 
 ROOT = os.environ.get('DL_AMR_ROOT', os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
-PRED_DIR = f'{ROOT}/ml/runs/infer_delta_hetero_star_uvp_wake_re100_150_nll_lr3e4_test/preds'
-DATA_PT = f'{ROOT}/ml/data/processed/cylinder_delta_star_uvp_wake_re100_150/test.pt'
-OUT_DIR = f'{ROOT}/paper/fig'
+PRED_DIR = os.environ.get('DL_AMR_PREDS', os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'reference_data', 'preds'))
+DATA_PT = os.environ.get('DL_AMR_TESTPT', os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'reference_data', 'test.pt'))
+OUT_DIR = os.environ.get('DL_AMR_OUTDIR', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'output'))
+os.makedirs(OUT_DIR, exist_ok=True)
+
+require_or_skip(
+    'Fig 12 (threshold sensitivity)',
+    'Run `make download-reference` to fetch test.pt and per-sample predictions, '
+    'or set DL_AMR_TESTPT / DL_AMR_PREDS to point at your own copies.',
+    DATA_PT, PRED_DIR,
+)
 
 C_BLUE = '#2166ac'
 C_RED = '#b2182b'

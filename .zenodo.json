@@ -1,0 +1,34 @@
+{
+  "title": "DL-AMR: Heteroscedastic Temporal-Residual Learning for Dynamic Adaptive Mesh Refinement in Bluff-Body Wake Flows",
+  "description": "Source code, OpenFOAM solver, simulation case templates, training configurations, post-processing scripts, pretrained models, and minimal reference dataset accompanying the paper of the same name. Reproduces all figures and tables.",
+  "creators": [
+    {"name": "Kang, Jiwon",     "affiliation": "Inha University"},
+    {"name": "Oh, Minhyeok",    "affiliation": "Inha University"},
+    {"name": "Son, Jongmin",    "affiliation": "Inha University"},
+    {"name": "Jeon, Joongoo",   "affiliation": "Pohang University of Science and Technology"},
+    {"name": "Lee, Sangseung",  "affiliation": "Inha University"}
+  ],
+  "upload_type": "software",
+  "access_right": "open",
+  "license": "MIT",
+  "keywords": [
+    "Adaptive mesh refinement",
+    "Deep learning",
+    "Uncertainty quantification",
+    "Bluff-body flow",
+    "OpenFOAM",
+    "U-Net",
+    "Heteroscedastic regression",
+    "Computational fluid dynamics"
+  ],
+  "communities": [
+    {"identifier": "openfoam"}
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/rider37/dl-amr",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    }
+  ]
+}

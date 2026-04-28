@@ -74,16 +74,17 @@ GEOMETRIES = {
     'diamond_Re150':  {'title': 'Diamond\n(unseen)',  'Re': 150, 'shape': 'diamond'},
 }
 
-CASE_SUFFIXES = {
-    'fine': '',
-    'coarse': '_coarse',
-    'dl_wake': '_coarse_amr_dl_uvp_wake_nll',
-    'grad_amr': '_coarse_amr_vorticity',
+CASE_METHODS = {
+    'fine':     'fine',
+    'coarse':   'coarse',
+    'dl_wake':  'dl_amr',
+    'dl_amr':   'dl_amr',
+    'grad_amr': 'grad_amr',
 }
 
 
 def case_dir(geom, key):
-    return os.path.join(BASE, geom + CASE_SUFFIXES[key])
+    return os.path.join(BASE, geom, CASE_METHODS[key])
 
 
 # ============================================================
@@ -1045,6 +1046,17 @@ def generate_dl_vs_grad_figure():
 # Main
 # ============================================================
 if __name__ == '__main__':
+    import sys
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from _data_check import require_or_skip
+    require_or_skip(
+        'Figs 1, 7 (overview + line sampling)',
+        'Run the OpenFOAM cases (e.g. `cd cases/circular_Re200/fine && ./Allrun`) '
+        'or download a pre-computed case bundle into cases/ from Zenodo.',
+        os.path.join(BASE, 'circular_Re200', 'fine', 'postProcessing',
+                     'forceCoeffs', '0', 'coefficient.dat'),
+    )
+
     print("=" * 60)
     print("DL-AMR Paper Figure Generation")
     print("=" * 60)

@@ -37,7 +37,7 @@ preferred-citation:
   journal: "Journal of Computational Physics"
   year: 2026
   doi: "10.xxxx/yyyy"  # update upon publication
-repository-code: "https://github.com/<owner>/dl-amr-paper-code"
+repository-code: "https://github.com/rider37/dl-amr"
 license: MIT  # primary license; see LICENSE for component-specific terms
 keywords:
   - Adaptive mesh refinement

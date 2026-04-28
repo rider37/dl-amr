@@ -1,0 +1,76 @@
+{
+  "_comment": "Aggregate uncertainty-validation metrics for the heteroscedastic U-Net on the test split. Paths below are descriptive labels (origin of the data); for actual loading use the env vars DL_AMR_TESTPT (test.pt) and DL_AMR_PREDS (per-sample NPZs).",
+  "dataset_label": "cylinder_delta_star_uvp_wake_re100_150",
+  "split": "test",
+  "preds_dir_label": "reference_data/preds",
+  "correlations": {
+    "n_pixels": 11483136,
+    "pearson_sigma_abs_delta_full": 0.7121935164324623,
+    "pearson_sigma_pred_error_full": 0.8328738883968339,
+    "spearman_sigma_abs_delta_sampled": 0.9060934352581856,
+    "spearman_sigma_pred_error_sampled": 0.9158685829282528
+  },
+  "roc_auc": [
+    {
+      "target_quantile": 90,
+      "tau_abs_delta": 0.019534913823008537,
+      "auc": 0.9364827093903005,
+      "positive_fraction": 0.10000003483369004
+    },
+    {
+      "target_quantile": 95,
+      "tau_abs_delta": 0.028728023171424866,
+      "auc": 0.9522480327694136,
+      "positive_fraction": 0.05000001741684502
+    },
+    {
+      "target_quantile": 98,
+      "tau_abs_delta": 0.044819820672273636,
+      "auc": 0.9666866239034573,
+      "positive_fraction": 0.019999937299357947
+    },
+    {
+      "target_quantile": 99,
+      "tau_abs_delta": 0.06037638336420059,
+      "auc": 0.9762088165086208,
+      "positive_fraction": 0.009999968649678974
+    }
+  ],
+  "sigma_quantiles": {
+    "0": 0.0024787522852420807,
+    "1": 0.0024787522852420807,
+    "5": 0.003934863954782486,
+    "10": 0.004399315919727087,
+    "25": 0.008508486673235893,
+    "50": 0.019646141678094864,
+    "75": 0.07212299108505249,
+    "90": 0.2053302824497223,
+    "95": 0.30705690383911133,
+    "98": 0.49696943163871765,
+    "99": 0.658564031124115,
+    "99.5": 0.8359542489051819,
+    "99.9": 1.4421544075012207,
+    "100": 8.080750465393066
+  },
+  "abs_delta_quantiles": {
+    "0": 2.3612089705693506e-07,
+    "1": 6.122077138570603e-06,
+    "5": 4.3571159039856866e-05,
+    "10": 9.840273560257629e-05,
+    "25": 0.0003591641434468329,
+    "50": 0.0014023990370333195,
+    "75": 0.006966731045395136,
+    "90": 0.019534913823008537,
+    "95": 0.028728023171424866,
+    "98": 0.044819820672273636,
+    "99": 0.06037638336420059,
+    "99.5": 0.07693292200565338,
+    "99.9": 0.11318867653608322,
+    "100": 0.1794627457857132
+  },
+  "selected_overlay_samples": [
+    110,
+    515,
+    699
+  ]
+}

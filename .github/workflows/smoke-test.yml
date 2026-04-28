@@ -43,15 +43,41 @@ jobs:
               [ -f "$d/Allrun" ]                  || (echo "MISSING: $d/Allrun";                  exit 1)
             done
           done
+          for geom in circular_Re100 circular_Re150; do
+            d="cases/$geom/fine"
+            echo "Checking $d..."
+            [ -d "$d/0" ]                            || (echo "MISSING: $d/0";                            exit 1)
+            [ -d "$d/constant" ]                     || (echo "MISSING: $d/constant";                     exit 1)
+            [ -d "$d/system" ]                       || (echo "MISSING: $d/system";                       exit 1)
+            [ -f "$d/constant/transportProperties" ] || (echo "MISSING: $d/constant/transportProperties"; exit 1)
+          done
           echo "All case templates valid."
 
-      - name: Validate Python imports
+      - name: Validate Python imports (third-party)
         run: |
-          python -c "import torch, numpy, scipy, matplotlib, pyvista, pandas, sklearn"
-          # Sanity-check core ml/src modules at least syntax-load
-          python -c "import importlib.util, sys, pathlib; \
-            [importlib.util.spec_from_file_location(p.stem, p).loader.exec_module(importlib.util.module_from_spec(importlib.util.spec_from_file_location(p.stem, p))) \
-             for p in pathlib.Path('ml/src').rglob('*.py') if '__pycache__' not in str(p)]" || echo "(some scripts may need data; non-fatal)"
+          python -c "import torch, numpy, scipy, matplotlib, pyvista, pandas, sklearn, yaml"
+
+      - name: Validate ml package importable
+        run: |
+          # Should be importable from repo root
+          python -c "from ml.src.models import HeteroDeltaFullRes, UNet"
+          python -c "from ml.src.losses import bce_dice, gdl, ssim, sliced_wasserstein"
+          python -c "from ml.src.dataloaders import AMRDataset, NormalizeByStats"
+          python -c "from ml.src.utils import load_checkpoint, load_norm_stats, setup_logger"
+
+      - name: Validate analysis scripts syntax
+        run: |
+          for f in analysis/*.py; do
+            python -m py_compile "$f"
+          done
+          echo "All analysis scripts syntax-check pass."
+
+      - name: Validate scripts/*.sh exist and are executable
+        run: |
+          for s in scripts/*.sh; do
+            [ -x "$s" ] || (echo "Not executable: $s"; exit 1)
+          done
+          echo "All shell scripts executable."
 
       - name: License & citation files present
         run: |

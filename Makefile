@@ -1,6 +1,12 @@
 .PHONY: help install solver download-models download-reference \
         run-circular-fine run-circular-coarse run-circular-dl-amr run-circular-grad-amr \
+        run-square-fine   run-square-coarse   run-square-dl-amr   run-square-grad-amr \
+        run-diamond-fine  run-diamond-coarse  run-diamond-dl-amr  run-diamond-grad-amr \
         figs smoke-test clean clean-cases
+
+# Python interpreter used by smoke-test and figs targets.
+# Override with `make figs PYTHON=python3.11`.
+PYTHON ?= $(shell command -v python || command -v python3)
 
 help:
 	@echo "DL-AMR reproduction targets"
@@ -18,10 +24,9 @@ help:
 	@echo "  make figs               - regenerate all paper figures from cached data"
 	@echo ""
 	@echo "Full simulations (long-running):"
-	@echo "  make run-circular-fine"
-	@echo "  make run-circular-coarse"
-	@echo "  make run-circular-dl-amr"
-	@echo "  make run-circular-grad-amr"
+	@echo "  make run-{circular,square,diamond}-{fine,coarse,dl-amr,grad-amr}"
+	@echo "  e.g.   make run-circular-fine"
+	@echo "         make run-square-dl-amr"
 	@echo ""
 	@echo "Cleanup:"
 	@echo "  make clean              - remove all build artifacts and case results"
@@ -51,22 +56,25 @@ download-reference:
 	bash scripts/download_reference_data.sh
 
 smoke-test:
-	bash scripts/run_smoke_test.sh
+	PYTHON=$(PYTHON) bash scripts/run_smoke_test.sh
 
 figs:
-	bash scripts/generate_figures.sh
+	PYTHON=$(PYTHON) bash scripts/generate_figures.sh
 
-run-circular-fine:
-	cd cases/circular_Re200/fine && ./Allrun
+run-circular-fine:    ; cd cases/circular_Re200/fine     && ./Allrun
+run-circular-coarse:  ; cd cases/circular_Re200/coarse   && ./Allrun
+run-circular-dl-amr:  ; cd cases/circular_Re200/dl_amr   && ./Allrun
+run-circular-grad-amr:; cd cases/circular_Re200/grad_amr && ./Allrun
 
-run-circular-coarse:
-	cd cases/circular_Re200/coarse && ./Allrun
+run-square-fine:      ; cd cases/square_Re150/fine       && ./Allrun
+run-square-coarse:    ; cd cases/square_Re150/coarse     && ./Allrun
+run-square-dl-amr:    ; cd cases/square_Re150/dl_amr     && ./Allrun
+run-square-grad-amr:  ; cd cases/square_Re150/grad_amr   && ./Allrun
 
-run-circular-dl-amr:
-	cd cases/circular_Re200/dl_amr && ./Allrun
-
-run-circular-grad-amr:
-	cd cases/circular_Re200/grad_amr && ./Allrun
+run-diamond-fine:     ; cd cases/diamond_Re150/fine      && ./Allrun
+run-diamond-coarse:   ; cd cases/diamond_Re150/coarse    && ./Allrun
+run-diamond-dl-amr:   ; cd cases/diamond_Re150/dl_amr    && ./Allrun
+run-diamond-grad-amr: ; cd cases/diamond_Re150/grad_amr  && ./Allrun
 
 clean-cases:
 	@echo "Cleaning case time directories and outputs..."

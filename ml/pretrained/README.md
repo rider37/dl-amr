@@ -23,7 +23,7 @@ tar -xzf pretrained_models.tar.gz -C ml/pretrained/
 
 ```bash
 gh release download v1.0.0 --pattern pretrained_models.tar.gz \
-    --repo <owner>/dl-amr-paper-code
+    --repo rider37/dl-amr
 tar -xzf pretrained_models.tar.gz -C ml/pretrained/
 ```
 

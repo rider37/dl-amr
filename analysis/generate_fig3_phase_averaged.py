@@ -46,10 +46,10 @@ GEOMETRIES = {
     'diamond_Re150':  {'title': 'Diamond\n(unseen)', 'shape': 'diamond'},
 }
 CASES = {
-    'fine':     '',
-    'coarse':   '_coarse',
-    'dl_amr':   '_coarse_amr_dl_uvp_wake_nll',
-    'grad_amr': '_coarse_amr_vorticity',
+    'fine':     'fine',
+    'coarse':   'coarse',
+    'dl_amr':   'dl_amr',
+    'grad_amr': 'grad_amr',
 }
 PANEL_LABELS = {
     'fine': 'Fine',
@@ -77,7 +77,7 @@ EXPECTED_T = {
 
 
 def case_dir(geom, key):
-    return os.path.join(BASE, geom + CASES[key])
+    return os.path.join(BASE, geom, CASES[key])
 
 
 def add_obstacle(ax, shape, half_size=0.5):
@@ -385,8 +385,19 @@ def generate_fig3b(zoom_data, zoom_regions, vmin, vmax, levels):
 
 
 if __name__ == '__main__':
+    import sys
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from _data_check import require_or_skip
+    require_or_skip(
+        'Fig 3 (phase-averaged wake)',
+        'Run the OpenFOAM cases (e.g. `cd cases/circular_Re200/fine && ./Allrun`) '
+        'or download a pre-computed case bundle into cases/ from Zenodo.',
+        os.path.join(BASE, 'circular_Re200', 'fine', 'postProcessing',
+                     'forceCoeffs', '0', 'coefficient.dat'),
+    )
+
     import pickle
-    cache_path = '/tmp/fig3_phaseavg_v2_cache.pkl'
+    cache_path = '/tmp/fig3_phaseavg_cache.pkl'
     if os.path.exists(cache_path):
         print(f"Loading cached averaged fields from {cache_path}...")
         with open(cache_path, 'rb') as f:

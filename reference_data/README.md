@@ -1,58 +1,77 @@
 # Reference data
 
-Minimal processed data sufficient to reproduce the paper figures and
-tables **without** running the full OpenFOAM simulations.
+Each paper figure falls into one of three reproducibility tiers:
 
-This directory holds **download instructions only**. Actual data is
-distributed via Zenodo (DOI archive) and GitHub Release (mirror).
+| Tier | Figures            | What is needed                                                | How to obtain                                       |
+|------|--------------------|---------------------------------------------------------------|-----------------------------------------------------|
+| 1    | Fig 6              | Nothing — values are inlined in the script                    | works out of the box                                |
+| 2    | Figs 9, 10, 11, 12 | ML test set + per-sample predictions + uncertainty CSVs       | `make download-reference` (this directory)          |
+| 3    | Figs 1, 3, 4, 5, 7, 8 | Full OpenFOAM case results (postProcessing/, time dirs)     | run `cases/<geom>/<method>/Allrun`, or pull a case bundle from Zenodo into `cases/` |
 
-## Contents (after `make download-reference`)
+`make figs` runs every figure script. Tier-1 always succeeds; Tier-2/3
+scripts whose data is not present exit with code **2** ("skipped") and are
+counted separately from real failures.
+
+---
+
+## What lives in this directory
 
 ```
 reference_data/
-├── circular_Re200/
-│   ├── forceCoeffs_fine.csv
-│   ├── forceCoeffs_coarse.csv
-│   ├── forceCoeffs_dl_amr.csv
-│   ├── forceCoeffs_grad_amr.csv
-│   ├── UMean_fine.npz             # time-averaged U field on uniform grid
-│   ├── UMean_coarse.npz
-│   ├── UMean_dl_amr.npz
-│   └── UMean_grad_amr.npz
-├── square_Re150/    (same files)
-├── diamond_Re150/   (same files)
-├── grad_sweep_summary.csv         # cell count, L2, runtime per (l, u) combo
-└── metrics_table.csv               # paper Table values
+├── README.md                   (this file)
+├── calibration_bins.csv        IN-REPO   uncertainty calibration bin stats   (Fig 9)
+├── roc_auc.csv                 IN-REPO   ROC AUC values per channel/τ        (Fig 10)
+├── uncertainty_report.json     IN-REPO   summary metrics (ρ, NLL, etc.)      (Fig 11)
+├── test.pt                     ZENODO    torch.save dict {X, y, mask}        (Figs 9–12)
+└── preds/                      ZENODO    per-sample predictions
+    ├── 00000.npz                          arrays: pred, mask, aux
+    ├── 00001.npz
+    └── ...
 ```
+
+`test.pt` schema:
+
+| Key   | Shape              | Type                                 |
+|-------|--------------------|--------------------------------------|
+| `X`   | `(N, 3, 64, 224)`  | normalized inputs $(u^\ast, v^\ast, p^\ast)$ |
+| `y`   | `(N, 3, 64, 224)`  | normalized target $\Delta\mathbf{q}_t$       |
+| `mask`| `(N, 64, 224)`     | wake-region mask                     |
+
+`preds/<NNNNN>.npz` (one file per test sample, zero-padded index;
+emitted by `ml/src/infer.py`):
+
+| Key    | Shape           | Description                                                         |
+|--------|-----------------|---------------------------------------------------------------------|
+| `pred` | `(3, 64, 224)`  | predicted Δq mean (denormalized to physical units)                  |
+| `mask` | scalar (`None`) | per-sample mask, used only for the segmentation task (else `None`)  |
+| `aux`  | `(1, 64, 224)`  | auxiliary head output. The heteroscedastic U-Net uses a single shared log-variance channel (`out_ch_logvar=1`); figures read it as `logvar = aux[0]` (shape `(64, 224)`) and derive σ via `np.exp(logvar / 2)`. |
 
 ## Download
 
 ```bash
 make download-reference
-# or directly:
+# or
 bash scripts/download_reference_data.sh
 ```
 
-The script tries Zenodo first, then falls back to GitHub Release. See
-[`../docs/data_availability.md`](../docs/data_availability.md) for DOI
-and licensing.
+The script tries Zenodo first then falls back to GitHub Release.
+See [`../docs/data_availability.md`](../docs/data_availability.md) for DOI.
 
-## File formats
+## Environment overrides
 
-- **CSVs**: comma-separated, ASCII, with header row.
-- **NPZs**: NumPy archive with three arrays per file:
-  - `Xi` (ny, nx) — x-coordinate grid in $D$ units
-  - `Yi` (ny, nx) — y-coordinate grid in $D$ units
-  - `Ux` (ny, nx) — time-averaged streamwise velocity normalised by $U_\infty$
+Each script honours these environment variables (with the defaults above):
 
-Loading example:
-```python
-import numpy as np
-data = np.load('reference_data/circular_Re200/UMean_fine.npz')
-Xi, Yi, Ux = data['Xi'], data['Yi'], data['Ux']
-```
+| Variable           | Default                                | Used by                           |
+|--------------------|----------------------------------------|-----------------------------------|
+| `DL_AMR_DATA`      | `reference_data/`                      | uncertainty CSV/JSON loader       |
+| `DL_AMR_TESTPT`    | `reference_data/test.pt`               | Figs 9–12                         |
+| `DL_AMR_PREDS`     | `reference_data/preds/`                | Figs 9–12                         |
+| `DL_AMR_CASES`     | `cases/`                               | Figs 1, 3, 4, 5, 7, 8             |
+| `DL_AMR_OUTDIR`    | `analysis/output/`                     | all figure scripts (output dir)   |
+
+Set these to point at your own copies of the data.
 
 ## License
 
-Reference data is distributed under CC-BY 4.0; see [`../LICENSE-DATA`](../LICENSE-DATA).
+CC-BY 4.0; see [`../LICENSE-DATA`](../LICENSE-DATA).
 Citation: see [`../CITATION.cff`](../CITATION.cff).

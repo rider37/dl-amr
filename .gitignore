@@ -37,10 +37,12 @@ __pycache__/
 *.tar.gz
 *.zip
 
-# .npz: ignore by default but allow tracked reference data
-*.npz
+# Allow small reference samples committed under reference_data/
 !/reference_data/**/*.npz
-!/analysis/data/**/*.npz
+!/reference_data/**/*.pt
+
+# Ignore by default
+*.npz
 
 # =========================
 # OpenFOAM solver build artifacts
@@ -48,6 +50,11 @@ __pycache__/
 /solver/**/*.dep
 /solver/**/*.o
 /solver/**/linux64*/
+
+# =========================
+# Figure regeneration output
+# =========================
+/analysis/output/
 
 # =========================
 # LaTeX build artifacts

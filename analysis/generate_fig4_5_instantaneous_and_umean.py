@@ -47,10 +47,10 @@ GEOMETRIES = {
 }
 
 CASE_SUFFIXES = {
-    'fine': '',
-    'coarse': '_coarse',
-    'dl_amr': '_coarse_amr_dl_uvp_wake_nll',
-    'grad_amr': '_coarse_amr_vorticity',
+    'fine':     'fine',
+    'coarse':   'coarse',
+    'dl_amr':   'dl_amr',
+    'grad_amr': 'grad_amr',
 }
 
 PANEL_LABELS = {
@@ -77,7 +77,7 @@ METHODS_ERR = ['coarse', 'dl_amr', 'grad_amr']
 
 
 def case_dir(geom, key):
-    return os.path.join(BASE, geom + CASE_SUFFIXES[key])
+    return os.path.join(BASE, geom, CASE_SUFFIXES[key])
 
 
 def add_obstacle(ax, shape, half_size=0.5):
@@ -446,6 +446,17 @@ def generate_scatter(umean_data):
 # Main
 # ============================================================
 if __name__ == '__main__':
+    import sys
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from _data_check import require_or_skip
+    require_or_skip(
+        'Figs 4, 5 (instantaneous wake + UMean)',
+        'Run the OpenFOAM cases (e.g. `cd cases/circular_Re200/fine && ./Allrun`) '
+        'or download a pre-computed case bundle into cases/ from Zenodo.',
+        os.path.join(BASE, 'circular_Re200', 'fine', 'postProcessing',
+                     'forceCoeffs', '0', 'coefficient.dat'),
+    )
+
     # Phase-matched figures
     full_data, zoom_data, zoom_regions = load_phase_matched_data()
     absmax = 0
