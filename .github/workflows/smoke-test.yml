@@ -1,0 +1,61 @@
+name: Reproduction smoke test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: "pip"
+
+      - name: Install Python dependencies (CPU-only torch)
+        run: |
+          python -m pip install --upgrade pip
+          # Install CPU-only PyTorch first (smaller wheel for CI)
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install -r requirements.txt
+
+      - name: Validate case templates structure
+        run: |
+          set -e
+          for geom in circular_Re200 square_Re150 diamond_Re150; do
+            for method in fine coarse dl_amr grad_amr; do
+              d="cases/$geom/$method"
+              echo "Checking $d..."
+              [ -d "$d/0" ]                       || (echo "MISSING: $d/0";                       exit 1)
+              [ -d "$d/constant" ]                || (echo "MISSING: $d/constant";                exit 1)
+              [ -d "$d/system" ]                  || (echo "MISSING: $d/system";                  exit 1)
+              [ -f "$d/system/blockMeshDict" ]    || (echo "MISSING: $d/system/blockMeshDict";    exit 1)
+              [ -f "$d/system/controlDict" ]      || (echo "MISSING: $d/system/controlDict";      exit 1)
+              [ -f "$d/Allrun" ]                  || (echo "MISSING: $d/Allrun";                  exit 1)
+            done
+          done
+          echo "All case templates valid."
+
+      - name: Validate Python imports
+        run: |
+          python -c "import torch, numpy, scipy, matplotlib, pyvista, pandas, sklearn"
+          # Sanity-check core ml/src modules at least syntax-load
+          python -c "import importlib.util, sys, pathlib; \
+            [importlib.util.spec_from_file_location(p.stem, p).loader.exec_module(importlib.util.module_from_spec(importlib.util.spec_from_file_location(p.stem, p))) \
+             for p in pathlib.Path('ml/src').rglob('*.py') if '__pycache__' not in str(p)]" || echo "(some scripts may need data; non-fatal)"
+
+      - name: License & citation files present
+        run: |
+          for f in LICENSE LICENSE-CODE LICENSE-DATA solver/LICENSE CITATION.cff README.md; do
+            [ -f "$f" ] || (echo "MISSING: $f"; exit 1)
+          done
+          echo "All license/citation files present."

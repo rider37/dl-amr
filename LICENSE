@@ -1,0 +1,25 @@
+DL-AMR Multi-License Notice
+============================
+
+This repository contains components distributed under different licenses,
+reflecting the licensing requirements of the upstream projects on which
+they depend. See individual LICENSE files for full text.
+
+| Component                               | License                  | File                  |
+|-----------------------------------------|--------------------------|-----------------------|
+| Python training and analysis code       | MIT                      | LICENSE-CODE          |
+| OpenFOAM solver modifications           | GNU GPL v3.0             | solver/LICENSE        |
+| Pretrained model weights                | CC-BY 4.0                | LICENSE-DATA          |
+| Reference data (CSVs, npz, etc.)        | CC-BY 4.0                | LICENSE-DATA          |
+| Documentation and figures               | CC-BY 4.0                | LICENSE-DATA          |
+
+Rationale:
+- The OpenFOAM solver modifications (solver/) are derivative works of OpenFOAM,
+  which is licensed under GNU GPL v3.0. Per the GPL v3.0 terms, these
+  modifications are also distributed under GPL v3.0.
+- Other code (Python training, analysis, scripts) is original work under MIT.
+- Data artifacts (model weights, CSV/npz reference data) are under CC-BY 4.0
+  to permit broad reuse with attribution.
+
+If you use this code or data, please cite:
+[paper citation, see CITATION.cff]

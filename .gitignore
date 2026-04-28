@@ -1,0 +1,69 @@
+# =========================
+# OpenFOAM generated outputs (path-scoped to cases/)
+# =========================
+# Time directories with results (start with 1 or higher)
+/cases/**/[1-9]*/
+/cases/**/[0-9]*.[0-9]*/
+/cases/**/[0-9]*e[-+][0-9]*/
+
+# Parallel decomposition and post-processing
+/cases/**/processor*/
+/cases/**/postProcessing/
+/cases/**/constant/polyMesh/
+/cases/**/*.foam
+/cases/**/VTK/
+
+# Logs (path-scoped to avoid LaTeX/ML log conflicts)
+/cases/**/log
+/cases/**/log.*
+/cases/**/PyFoamServer.logfile
+/cases/**/PyFoamHistory
+
+# =========================
+# Python
+# =========================
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# =========================
+# Large binaries (distribute via Release/Zenodo)
+# =========================
+*.pt
+*.pth
+*.tar.gz
+*.zip
+
+# .npz: ignore by default but allow tracked reference data
+*.npz
+!/reference_data/**/*.npz
+!/analysis/data/**/*.npz
+
+# =========================
+# OpenFOAM solver build artifacts
+# =========================
+/solver/**/*.dep
+/solver/**/*.o
+/solver/**/linux64*/
+
+# =========================
+# LaTeX build artifacts
+# =========================
+*.aux
+*.out
+*.blg
+*.spl
+*.toc
+*.synctex.gz
+
+# =========================
+# Editor / OS
+# =========================
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*~

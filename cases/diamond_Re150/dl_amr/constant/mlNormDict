@@ -1,0 +1,21 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      mlNormDict;
+}
+
+mlNormDict
+{
+    method      zscore;
+    eps         1e-12;
+    zClip       true;
+    zClipLow    -3.0;
+    zClipHigh   3.0;
+
+    u { mean 0.950883361363; std 0.120681112527; }
+    v { mean -1.17044595229e-05; std 0.10532363167; }
+    p { mean -0.0110220630986; std 0.0345534661789; }
+}

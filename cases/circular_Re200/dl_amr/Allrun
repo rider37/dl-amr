@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")"
+
+blockMesh > log.blockMesh 2>&1
+checkMesh > log.checkMesh 2>&1
+
+if [ -x /usr/bin/time ]; then
+    export TORCH_CUDNN_V8_API_DISABLED=1
+    /usr/bin/time -v amrPimpleFoam > log.pimpleFoam 2> log.time
+else
+    export TORCH_CUDNN_V8_API_DISABLED=1
+    amrPimpleFoam > log.pimpleFoam 2>&1
+fi

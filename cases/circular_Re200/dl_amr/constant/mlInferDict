@@ -1,0 +1,39 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      mlInferDict;
+}
+
+mlInferDict
+{
+    modelPath       "/home/jiwon/code/dl-amr/ml/runs/delta_hetero_star_uvp_wake_re100_150_nll_lr3e4_run/best.ts";
+
+    useCp           false;
+    useVorticity    false;
+    uncStats        true;
+    uncUseSigma     true;
+
+    NX              224;
+    NY              64;
+    sampleMethod    nearest;
+
+    useRegion       true;
+    regionMin       (2 -5 -0.5);
+    regionMax       (39 5 0.5);
+
+    attnThr         -1.0;
+    thrIsGE         true;
+
+    noRefineShape   rect;
+    noRefineMin     (-2 -2 -0.5);
+    noRefineMax     (2 2 0.5);
+
+    ompThreads      1;
+    cudnnEnabled       true;
+    cudnnBenchmark     true;
+    cudnnDeterministic false;
+    cudnnTF32          true;
+}

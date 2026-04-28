@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")"
+
+blockMesh > log.blockMesh 2>&1
+checkMesh > log.checkMesh 2>&1
+postProcess -dict system/gradUDict -fields '(U)' -time 0 > log.gradUInit 2>&1
+
+if [ -x /usr/bin/time ]; then
+    /usr/bin/time -v protectedPimpleFoam > log.pimpleFoam 2> log.time
+else
+    protectedPimpleFoam > log.pimpleFoam 2>&1
+fi

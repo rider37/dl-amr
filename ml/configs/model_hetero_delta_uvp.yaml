@@ -1,0 +1,5 @@
+out_channels: 3
+out_ch_logvar: 1
+base_channels: 32
+logvar_min: -12.0
+logvar_max: 6.0

@@ -1,0 +1,4 @@
+in_channels: 4
+out_channels: 1
+depth: 4
+base_channels: 32

@@ -1,0 +1,7 @@
+dataset_path: ml/data/processed/cylinder_delta_star_uvp_wake_re100_150
+split: val
+task: reg
+model_type: hetero_delta
+preds_dir: ml/runs/infer_delta_hetero_star_uvp_wake_re100_150_nll_lr3e4/preds
+report_path: ml/runs/infer_delta_hetero_star_uvp_wake_re100_150_nll_lr3e4/eval_report.json
+norm_stats: ml/data/processed/cylinder_delta_star_uvp_wake_re100_150/norm_stats.json

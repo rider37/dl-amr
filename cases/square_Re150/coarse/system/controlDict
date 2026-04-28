@@ -1,0 +1,76 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+
+application     pimpleFoam;
+
+startFrom       latestTime;
+startTime       0;
+
+stopAt          endTime;
+endTime         400;
+deltaT          0.005;
+adjustTimeStep  yes;
+maxCo           0.5;
+maxDeltaT       0.01;
+
+writeControl    adjustableRunTime;
+writeInterval   0.1;
+purgeWrite      0;
+writeFormat     ascii;
+writePrecision  8;
+writeCompression off;
+timeFormat      general;
+timePrecision   8;
+runTimeModifiable true;
+
+functions
+{
+    forceCoeffs
+    {
+        type            forceCoeffs;
+        libs            ("libforces.so");
+        writeControl    adjustableRunTime;
+        writeInterval   0.1;
+        log             true;
+
+        patches         (obstacle);
+        rho             rhoInf;
+        rhoInf          1;
+
+        CofR            (0 0 0);
+        dragDir         (1 0 0);
+        liftDir         (0 1 0);
+        pitchAxis       (0 0 1);
+        magUInf         1;
+        lRef            1;
+        Aref            0.1;
+    }
+    fieldAverage1
+    {
+        type            fieldAverage;
+        timeStart       266.3;
+        libs            (fieldFunctionObjects);
+        writeControl    writeTime;
+        fields
+        (
+            U
+            {
+                mean        on;
+                prime2Mean  on;
+                base        time;
+            }
+            p
+            {
+                mean        on;
+                prime2Mean  off;
+                base        time;
+            }
+        );
+    }
+
+}

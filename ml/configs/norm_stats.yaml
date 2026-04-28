@@ -1,0 +1,4 @@
+# normalization stats
+# generate with:
+# python ml/src/compute_norm.py --dataset_path ml/data/processed/cylinder_demo --split train
+norm_stats: ml/data/processed/cylinder_demo/norm_stats.json

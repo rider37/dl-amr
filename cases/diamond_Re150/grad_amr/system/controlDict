@@ -1,0 +1,97 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+
+application     protectedPimpleFoam;
+
+startFrom       startTime;
+startTime       0;
+
+stopAt          endTime;
+endTime         400;
+deltaT          0.01;
+adjustTimeStep  yes;
+maxCo           1.0;
+maxDeltaT       0.02;
+
+writeControl    adjustableRunTime;
+writeInterval   1;
+purgeWrite      0;
+writeFormat     ascii;
+writePrecision  8;
+writeCompression off;
+timeFormat      general;
+timePrecision   8;
+runTimeModifiable true;
+
+functions
+{
+    forceCoeffs
+    {
+        type            forceCoeffs;
+        libs            ("libforces.so");
+        writeControl    adjustableRunTime;
+        writeInterval   1;
+        log             true;
+
+        patches         (obstacle);
+        rho             rhoInf;
+        rhoInf          1;
+
+        CofR            (0 0 0);
+        dragDir         (1 0 0);
+        liftDir         (0 1 0);
+        pitchAxis       (0 0 1);
+        magUInf         1;
+        lRef            1;
+        Aref            0.1;
+    }
+
+    gradU
+    {
+        type            grad;
+        libs            (fieldFunctionObjects);
+        field           U;
+        result          gradU;
+        executeControl  timeStep;
+        executeInterval 1;
+        writeControl    writeTime;
+    }
+
+    magGradU
+    {
+        type            mag;
+        libs            (fieldFunctionObjects);
+        field           gradU;
+        result          magGradU;
+        executeControl  timeStep;
+        executeInterval 1;
+        writeControl    writeTime;
+    }
+
+    fieldAverage1
+    {
+        type            fieldAverage;
+        libs            (fieldFunctionObjects);
+        writeControl    writeTime;
+        fields
+        (
+            U
+            {
+                mean        on;
+                prime2Mean  on;
+                base        time;
+            }
+            p
+            {
+                mean        on;
+                prime2Mean  off;
+                base        time;
+            }
+        );
+    }
+}

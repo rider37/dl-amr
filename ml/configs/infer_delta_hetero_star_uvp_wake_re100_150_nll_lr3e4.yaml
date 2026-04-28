@@ -1,0 +1,12 @@
+checkpoint: ml/runs/delta_hetero_star_uvp_wake_re100_150_nll_lr3e4_run/best.ckpt
+dataset_path: ml/data/processed/cylinder_delta_star_uvp_wake_re100_150
+split: val
+task: reg
+model_type: hetero_delta
+out_dir: ml/runs/infer_delta_hetero_star_uvp_wake_re100_150_nll_lr3e4
+norm_stats: ml/data/processed/cylinder_delta_star_uvp_wake_re100_150/norm_stats.json
+delta_target_scale: null
+delta_norm_stats: ml/data/processed/cylinder_delta_star_uvp_wake_re100_150/target_norm.json
+viz_samples: 4
+viz_seed: 42
+viz_out_dir: ml/runs/infer_delta_hetero_star_uvp_wake_re100_150_nll_lr3e4/viz

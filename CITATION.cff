@@ -1,0 +1,48 @@
+cff-version: 1.2.0
+title: "DL-AMR: Heteroscedastic Temporal-Residual Learning for Dynamic Adaptive Mesh Refinement in Bluff-Body Wake Flows"
+message: "If you use this software or data, please cite the following paper."
+type: software
+authors:
+  - family-names: Kang
+    given-names: Jiwon
+    affiliation: "Inha University"
+  - family-names: Oh
+    given-names: Minhyeok
+    affiliation: "Inha University"
+  - family-names: Son
+    given-names: Jongmin
+    affiliation: "Inha University"
+  - family-names: Jeon
+    given-names: Joongoo
+    affiliation: "Pohang University of Science and Technology"
+    email: "jgjeon41@postech.ac.kr"
+  - family-names: Lee
+    given-names: Sangseung
+    affiliation: "Inha University"
+    email: "sangseunglee@inha.ac.kr"
+preferred-citation:
+  type: article
+  authors:
+    - family-names: Kang
+      given-names: Jiwon
+    - family-names: Oh
+      given-names: Minhyeok
+    - family-names: Son
+      given-names: Jongmin
+    - family-names: Jeon
+      given-names: Joongoo
+    - family-names: Lee
+      given-names: Sangseung
+  title: "Heteroscedastic Temporal-Residual Learning for Dynamic Adaptive Mesh Refinement in Bluff-Body Wake Flows"
+  journal: "Journal of Computational Physics"
+  year: 2026
+  doi: "10.xxxx/yyyy"  # update upon publication
+repository-code: "https://github.com/<owner>/dl-amr-paper-code"
+license: MIT  # primary license; see LICENSE for component-specific terms
+keywords:
+  - Adaptive mesh refinement
+  - Deep learning
+  - Uncertainty quantification
+  - Bluff-body flow
+  - OpenFOAM
+  - U-Net

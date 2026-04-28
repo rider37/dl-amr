@@ -1,0 +1,97 @@
+Evaluating 61 time points per variant
+
+=== circular_Re200 ===
+
+-- grad_amr --
+  [circular_Re200/grad_amr] base_vol=0.005104, refined_thr=0.003062
+  Top 5 times (by wake_frac, then compact):
+    t= 360.0  total= 86936  n_ref=74496  wake_frac=0.419
+    t= 250.0  total= 86558  n_ref=74118  wake_frac=0.416
+    t= 180.0  total= 86495  n_ref=74055  wake_frac=0.415
+    t= 325.0  total= 86299  n_ref=73859  wake_frac=0.414
+    t= 315.0  total= 86138  n_ref=73698  wake_frac=0.413
+  Top 5 most compact (min n_ref):
+    t= 205.0  total= 82631  n_ref=70191  wake_frac=0.383
+    t= 290.0  total= 82638  n_ref=70198  wake_frac=0.383
+    t= 190.0  total= 83156  n_ref=70716  wake_frac=0.388
+    t= 320.0  total= 83233  n_ref=70793  wake_frac=0.388
+    t= 210.0  total= 83359  n_ref=70919  wake_frac=0.390
+
+-- dl_amr --
+  [circular_Re200/dl_amr] base_vol=0.005104, refined_thr=0.003062
+  Top 5 times (by wake_frac, then compact):
+    t= 215.0  total= 93880  n_ref=81440  wake_frac=0.467
+    t= 220.0  total= 93404  n_ref=80964  wake_frac=0.464
+    t= 390.0  total= 93362  n_ref=80922  wake_frac=0.464
+    t= 290.0  total= 92627  n_ref=80187  wake_frac=0.459
+    t= 395.0  total= 92557  n_ref=80117  wake_frac=0.459
+  Top 5 most compact (min n_ref):
+    t= 270.0  total= 88063  n_ref=75623  wake_frac=0.427
+    t= 100.0  total= 88077  n_ref=75637  wake_frac=0.426
+    t= 260.0  total= 88504  n_ref=76064  wake_frac=0.431
+    t= 275.0  total= 88581  n_ref=76141  wake_frac=0.429
+    t= 325.0  total= 88623  n_ref=76183  wake_frac=0.427
+
+=== square_Re150 ===
+
+-- grad_amr --
+  [square_Re150/grad_amr] base_vol=0.005104, refined_thr=0.003062
+  Top 5 times (by wake_frac, then compact):
+    t= 270.0  total= 87412  n_ref=74972  wake_frac=0.444
+    t= 210.0  total= 87041  n_ref=74601  wake_frac=0.442
+    t= 395.0  total= 86810  n_ref=74370  wake_frac=0.440
+    t= 340.0  total= 86698  n_ref=74258  wake_frac=0.439
+    t= 305.0  total= 86642  n_ref=74202  wake_frac=0.439
+  Top 5 most compact (min n_ref):
+    t= 150.0  total= 82827  n_ref=70387  wake_frac=0.408
+    t= 380.0  total= 83296  n_ref=70856  wake_frac=0.412
+    t= 345.0  total= 83324  n_ref=70884  wake_frac=0.412
+    t= 310.0  total= 83345  n_ref=70905  wake_frac=0.413
+    t= 180.0  total= 83394  n_ref=70954  wake_frac=0.413
+
+-- dl_amr --
+  [square_Re150/dl_amr] base_vol=0.005104, refined_thr=0.003062
+  Top 5 times (by wake_frac, then compact):
+    t= 285.0  total= 86691  n_ref=74251  wake_frac=0.439
+    t= 330.0  total= 86929  n_ref=74489  wake_frac=0.437
+    t= 265.0  total= 86327  n_ref=73887  wake_frac=0.436
+    t= 310.0  total= 86292  n_ref=73852  wake_frac=0.436
+    t= 195.0  total= 86047  n_ref=73607  wake_frac=0.434
+  Top 5 most compact (min n_ref):
+    t= 200.0  total= 81119  n_ref=68679  wake_frac=0.390
+    t= 240.0  total= 81126  n_ref=68686  wake_frac=0.391
+    t= 280.0  total= 81196  n_ref=68756  wake_frac=0.393
+    t= 220.0  total= 81497  n_ref=69057  wake_frac=0.391
+    t= 180.0  total= 81826  n_ref=69386  wake_frac=0.393
+
+=== diamond_Re150 ===
+
+-- grad_amr --
+  [diamond_Re150/grad_amr] base_vol=0.002481, refined_thr=0.001489
+  Top 5 times (by wake_frac, then compact):
+    t= 160.0  total=100194  n_ref=83724  wake_frac=0.400
+    t= 180.0  total=100460  n_ref=84027  wake_frac=0.400
+    t= 100.0  total= 96589  n_ref=79821  wake_frac=0.399
+    t= 165.0  total=100390  n_ref=83953  wake_frac=0.397
+    t= 365.0  total= 99704  n_ref=83220  wake_frac=0.396
+  Top 5 most compact (min n_ref):
+    t= 110.0  total= 95973  n_ref=79288  wake_frac=0.388
+    t= 105.0  total= 96323  n_ref=79610  wake_frac=0.392
+    t= 100.0  total= 96589  n_ref=79821  wake_frac=0.399
+    t= 125.0  total= 96652  n_ref=80063  wake_frac=0.383
+    t= 145.0  total= 96778  n_ref=80244  wake_frac=0.381
+
+-- dl_amr --
+  [diamond_Re150/dl_amr] base_vol=0.005104, refined_thr=0.003062
+  Top 5 times (by wake_frac, then compact):
+    t= 400.0  total=116056  n_ref=103616  wake_frac=0.563
+    t= 280.0  total=114943  n_ref=102503  wake_frac=0.561
+    t= 205.0  total=113781  n_ref=101341  wake_frac=0.556
+    t= 295.0  total=113858  n_ref=101418  wake_frac=0.556
+    t= 375.0  total=113109  n_ref=100669  wake_frac=0.554
+  Top 5 most compact (min n_ref):
+    t= 395.0  total= 94363  n_ref=81923  wake_frac=0.451
+    t= 290.0  total= 95518  n_ref=83078  wake_frac=0.460
+    t= 195.0  total= 98150  n_ref=85712  wake_frac=0.477
+    t= 255.0  total= 99235  n_ref=86795  wake_frac=0.482
+    t= 210.0  total= 99319  n_ref=86879  wake_frac=0.484
