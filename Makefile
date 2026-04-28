@@ -35,7 +35,14 @@ install:
 	fi
 
 solver:
+	@if [ -z "$$LIBTORCH_DIR" ]; then \
+	    echo "ERROR: LIBTORCH_DIR is not set."; \
+	    echo "Export the path to your LibTorch install before building, e.g.:"; \
+	    echo "  export LIBTORCH_DIR=/path/to/libtorch"; \
+	    exit 1; \
+	fi
 	cd solver/amrPimpleFoam && wmake
+	cd solver/protectedPimpleFoam && wmake
 
 download-models:
 	bash scripts/download_models.sh

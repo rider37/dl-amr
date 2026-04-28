@@ -9,7 +9,7 @@ FoamFile
 
 mlInferDict
 {
-    modelPath       "/home/jiwon/code/dl-amr/ml/runs/delta_hetero_star_uvp_wake_re100_150_nll_lr3e4_run/best.ts";
+    modelPath       "<case>/constant/model.ts";
 
     useCp           false;
     useVorticity    false;

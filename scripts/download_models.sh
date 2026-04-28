@@ -41,3 +41,14 @@ rm "${ARCHIVE}"
 
 echo "Done. Models extracted to $(pwd)/"
 ls -lh *.pt 2>/dev/null || true
+
+# Symlink model into each dl_amr case so OpenFOAM can find it
+cd ../..   # back to repo root
+MODEL_FILE="ml/pretrained/heteroscedastic_unet.pt"
+if [ -f "$MODEL_FILE" ]; then
+    for case_dir in cases/*/dl_amr; do
+        [ -d "$case_dir" ] || continue
+        ln -sf "$(pwd)/$MODEL_FILE" "$case_dir/constant/model.ts"
+        echo "  Linked: $case_dir/constant/model.ts"
+    done
+fi

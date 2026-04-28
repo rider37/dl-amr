@@ -27,9 +27,10 @@ Install Python deps:
 make install                          # uses env.yml (conda) or requirements.txt
 ```
 
-Build the OpenFOAM solver:
+Build the OpenFOAM solvers (`amrPimpleFoam` and `protectedPimpleFoam`):
 ```bash
 source $WM_PROJECT_DIR/etc/bashrc     # ensure OpenFOAM env is sourced
+export LIBTORCH_DIR=/path/to/libtorch # required for amrPimpleFoam
 make solver
 ```
 

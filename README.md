@@ -52,7 +52,11 @@ make figs                 # Regenerate paper figures from cached data
 
 - Python 3.10+ (PyTorch, NumPy, SciPy, matplotlib, PyVista)
 - OpenFOAM v2312 (other recent versions may work)
-- LibTorch C++ runtime (matched to the PyTorch version used for export)
+- LibTorch C++ runtime (matched to the PyTorch version used for export);
+  set `LIBTORCH_DIR` before `make solver`:
+  ```bash
+  export LIBTORCH_DIR=/path/to/libtorch
+  ```
 - (Recommended) NVIDIA GPU with CUDA for ML inference
 
 ## Full reproduction

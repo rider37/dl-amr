@@ -3,6 +3,14 @@ set -euo pipefail
 
 cd "$(dirname "$0")"
 
+# Verify pretrained model is present (downloaded via 'make download-models')
+if [ ! -f constant/model.ts ]; then
+    echo "ERROR: constant/model.ts not found."
+    echo "Either run 'make download-models' from the repo root, or symlink:"
+    echo "  ln -sf \$(pwd)/../../../ml/pretrained/heteroscedastic_unet.pt constant/model.ts"
+    exit 1
+fi
+
 blockMesh > log.blockMesh 2>&1
 checkMesh > log.checkMesh 2>&1
 

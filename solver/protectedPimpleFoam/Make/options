@@ -8,12 +8,7 @@ EXE_INC = \
     -I$(LIB_SRC)/transportModels/incompressible/singlePhaseTransportModel \
     -I$(LIB_SRC)/dynamicMesh/lnInclude \
     -I$(LIB_SRC)/dynamicFvMesh/lnInclude \
-    -I$(LIB_SRC)/regionFaModels/lnInclude \
-    -I$(LIBTORCH_DIR)/include \
-    -I$(LIBTORCH_DIR)/include/torch/csrc/api/include \
-    -D_GLIBCXX_USE_CXX11_ABI=1 \
-    -std=c++17 \
-    -fopenmp
+    -I$(LIB_SRC)/regionFaModels/lnInclude
 
 EXE_LIBS = \
     -lfiniteVolume \
@@ -28,9 +23,4 @@ EXE_LIBS = \
     -ltopoChangerFvMesh \
     -latmosphericModels \
     -lregionFaModels \
-    -lfiniteArea \
-    -Wl,-rpath,$(LIBTORCH_DIR)/lib $(LIBTORCH_DIR)/lib/libtorch.so $(LIBTORCH_DIR)/lib/libc10.so \
-    -Wl,--no-as-needed,$(LIBTORCH_DIR)/lib/libtorch_cpu.so \
-    -Wl,--as-needed $(LIBTORCH_DIR)/lib/libc10.so \
-    -Wl,--no-as-needed,$(LIBTORCH_DIR)/lib/libtorch.so \
-    -fopenmp
+    -lfiniteArea
