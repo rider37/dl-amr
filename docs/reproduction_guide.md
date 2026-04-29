@@ -48,11 +48,13 @@ Each figure falls into one of three reproducibility tiers (see
 | 3    | Figs 1, 3, 4, 5, 7, 8 | full OpenFOAM case results in `cases/<geom>/<method>/`         |
 
 ```bash
-make download-models                  # pretrained model
-make download-reference               # Tier-2 data: test.pt + preds/
+make download-artifacts               # pretrained model + Tier-2 reference data
 make smoke-test                       # verify environment + cases
 make figs                             # regenerate paper figures
 ```
+
+(`make download-artifacts` runs both `download-models` and
+`download-reference`; invoke them separately if you only need one.)
 
 `make figs` runs every figure script. Tier-1 always succeeds; Tier-2/3
 scripts whose data is absent print a clear *[SKIP]* line and exit with

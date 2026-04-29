@@ -36,13 +36,12 @@ __pycache__/
 *.pth
 *.tar.gz
 *.zip
-
-# Allow small reference samples committed under reference_data/
-!/reference_data/**/*.npz
-!/reference_data/**/*.pt
-
-# Ignore by default
 *.npz
+
+# Allow small committed reference samples (only under reference_data/samples/).
+# Larger archives such as reference_data/test.pt and reference_data/preds/*.npz
+# are obtained via `make download-reference` and must NOT be committed.
+!/reference_data/samples/**/*.npz
 
 # =========================
 # OpenFOAM solver build artifacts

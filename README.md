@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE-CODE)
 [![License: GPL v3](https://img.shields.io/badge/Solver-GPL_v3-blue.svg)](solver/LICENSE)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19870610.svg)](https://doi.org/10.5281/zenodo.19870610)
 
 Companion code for:
 
@@ -17,13 +17,33 @@ uncertainty from the temporal residual of velocity and pressure fields; this
 uncertainty drives runtime mesh refinement in OpenFOAM through a modified
 solver `amrPimpleFoam`.
 
-## Quick reproduction (3 commands)
+## Quick reproduction
 
 ```bash
 make install              # Python environment
-make download-models      # Pretrained TorchScript model + reference data
-make figs                 # Regenerate paper figures from cached data
+make download-models      # Pretrained TorchScript model only
+make download-reference   # Minimal reference dataset only (test.pt + preds/)
+make smoke-test           # Verify environment + case templates
+make figs                 # Regenerate cached-data paper figures
 ```
+
+`make download-artifacts` is a one-shot shortcut for the two
+`download-*` targets above.
+
+**What `make figs` produces** depends on which data you have. Each figure
+script falls into one of three reproducibility tiers:
+
+| Tier | Figures           | Data needed                                                       |
+|------|-------------------|--------------------------------------------------------------------|
+| 1    | Fig 6             | none (values are inlined in the script)                            |
+| 2    | Figs 9, 10, 11, 12| `make download-reference` output (Tier-2 minimal dataset)          |
+| 3    | Figs 1, 3, 4, 5, 7, 8 | full OpenFOAM case results under `cases/<geom>/<method>/`     |
+
+Tier-2/3 scripts whose data is absent print a clear `[SKIP]` line and
+exit with code 2 (counted as **skipped**, not failed). See
+[`reference_data/README.md`](reference_data/README.md) for the
+data layout and [`docs/reproduction_guide.md`](docs/reproduction_guide.md)
+for the full reproduction recipe.
 
 ## Repository layout
 

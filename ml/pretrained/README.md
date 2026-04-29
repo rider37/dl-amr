@@ -7,14 +7,21 @@ are distributed via GitHub Release and Zenodo for archival stability.
 
 | File                          | Type        | Approx. Size | SHA256        | Description                                       |
 |-------------------------------|-------------|-------------:|---------------|---------------------------------------------------|
-| `heteroscedastic_unet.pt`     | TorchScript | 31 MB        | _to be filled_ | DL-AMR refinement indicator used in the paper     |
+| `heteroscedastic_unet.pt`     | TorchScript | 31 MB        | _to be filled after final artifact upload_ | DL-AMR refinement indicator used in the paper     |
 
 ## Download
 
 ### Recommended: Zenodo (DOI-cited, long-term archival)
 
+The pretrained model is bundled in the same Zenodo deposit as the code:
+
+- Concept DOI (always resolves to latest version):
+  [10.5281/zenodo.19870610](https://doi.org/10.5281/zenodo.19870610)
+- Pinned version `v1.0.2`:
+  [10.5281/zenodo.19873110](https://doi.org/10.5281/zenodo.19873110)
+
 ```bash
-wget https://zenodo.org/records/XXXXXXX/files/pretrained_models.tar.gz
+wget https://zenodo.org/records/19873110/files/pretrained_models.tar.gz
 sha256sum pretrained_models.tar.gz   # verify against above
 tar -xzf pretrained_models.tar.gz -C ml/pretrained/
 ```
@@ -22,8 +29,8 @@ tar -xzf pretrained_models.tar.gz -C ml/pretrained/
 ### Alternative: GitHub Release (mirror)
 
 ```bash
-gh release download v1.0.0 --pattern pretrained_models.tar.gz \
-    --repo rider37/dl-amr
+gh release download v1.0.2 --repo rider37/dl-amr \
+    --pattern pretrained_models.tar.gz
 tar -xzf pretrained_models.tar.gz -C ml/pretrained/
 ```
 

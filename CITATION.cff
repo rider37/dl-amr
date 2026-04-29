@@ -36,9 +36,13 @@ preferred-citation:
   title: "Heteroscedastic Temporal-Residual Learning for Dynamic Adaptive Mesh Refinement in Bluff-Body Wake Flows"
   journal: "Journal of Computational Physics"
   year: 2026
-  doi: "10.xxxx/yyyy"  # update upon publication
+  doi: "10.xxxx/yyyy"  # TODO: replace with the journal-issued DOI after JCP publication
 repository-code: "https://github.com/rider37/dl-amr"
-license: MIT  # primary license; see LICENSE for component-specific terms
+# Note: this repository is multi-licensed (MIT for Python code, GPL v3 for the
+# OpenFOAM-derived solver, CC-BY 4.0 for data/model/docs). CITATION.cff only
+# accepts a single SPDX identifier, so we declare the primary code license here
+# and refer to LICENSE for component-specific terms.
+license: MIT
 keywords:
   - Adaptive mesh refinement
   - Deep learning

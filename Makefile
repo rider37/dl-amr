@@ -1,4 +1,4 @@
-.PHONY: help install solver download-models download-reference \
+.PHONY: help install solver download-models download-reference download-artifacts \
         run-circular-fine run-circular-coarse run-circular-dl-amr run-circular-grad-amr \
         run-square-fine   run-square-coarse   run-square-dl-amr   run-square-grad-amr \
         run-diamond-fine  run-diamond-coarse  run-diamond-dl-amr  run-diamond-grad-amr \
@@ -16,6 +16,7 @@ help:
 	@echo "  make solver             - build OpenFOAM solver (amrPimpleFoam)"
 	@echo "  make download-models    - download pretrained models from Zenodo/Release"
 	@echo "  make download-reference - download minimal reference data"
+	@echo "  make download-artifacts - both of the above (one shot)"
 	@echo ""
 	@echo "Quick check:"
 	@echo "  make smoke-test         - quick reproducibility check (no full simulation)"
@@ -54,6 +55,8 @@ download-models:
 
 download-reference:
 	bash scripts/download_reference_data.sh
+
+download-artifacts: download-models download-reference
 
 smoke-test:
 	PYTHON=$(PYTHON) bash scripts/run_smoke_test.sh
