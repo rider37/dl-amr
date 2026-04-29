@@ -86,5 +86,5 @@ Refinement in Bluff-Body Wake Flows. Journal of Computational Physics.
 DOI: 10.xxxx/yyyy   # TODO: replace after JCP publication
 
 Software DOI (Zenodo, concept — always resolves to latest): 10.5281/zenodo.19870610
-Current version (v1.0.2):                                    10.5281/zenodo.19873110
+Current version (v1.0.3):                                    10.5281/zenodo.19874536
 ```

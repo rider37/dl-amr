@@ -6,17 +6,17 @@
 #   2. GitHub Release of $REPO with tag $RELEASE_TAG (mirror)
 #
 # Override at runtime, e.g.:
-#   ZENODO_RECORD=<id>  RELEASE_TAG=v1.0.2  REPO=rider37/dl-amr \
+#   ZENODO_RECORD=<id>  RELEASE_TAG=v1.0.3  REPO=rider37/dl-amr \
 #       bash scripts/download_models.sh
 #
 # Pinned to the same release as scripts/download_reference_data.sh:
 #   Concept DOI (always-latest): 10.5281/zenodo.19870610
-#   v1.0.2 version DOI         : 10.5281/zenodo.19873110
+#   v1.0.3 version DOI         : 10.5281/zenodo.19874536
 
 set -e
 
-ZENODO_RECORD="${ZENODO_RECORD:-19873110}"
-RELEASE_TAG="${RELEASE_TAG:-v1.0.2}"
+ZENODO_RECORD="${ZENODO_RECORD:-19874536}"
+RELEASE_TAG="${RELEASE_TAG:-v1.0.3}"
 REPO="${REPO:-rider37/dl-amr}"
 ARCHIVE="${ARCHIVE:-pretrained_models.tar.gz}"
 EXPECTED_SHA256="${EXPECTED_SHA256:-}"   # to be filled after final artifact upload
