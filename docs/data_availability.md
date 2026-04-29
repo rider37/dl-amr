@@ -85,6 +85,6 @@ Heteroscedastic Temporal-Residual Learning for Dynamic Adaptive Mesh
 Refinement in Bluff-Body Wake Flows. Journal of Computational Physics.
 DOI: 10.xxxx/yyyy   # TODO: replace after JCP publication
 
-Software DOI (Zenodo, concept — always resolves to latest): 10.5281/zenodo.19870610
-Current version (v1.0.3):                                    10.5281/zenodo.19874536
+Software DOI (Zenodo, concept — always resolves to the latest archived
+version of the deposit): 10.5281/zenodo.19870610
 ```

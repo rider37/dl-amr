@@ -13,24 +13,40 @@ are distributed via GitHub Release and Zenodo for archival stability.
 
 ### Recommended: Zenodo (DOI-cited, long-term archival)
 
-The pretrained model is bundled in the same Zenodo deposit as the code:
+The pretrained model is bundled in the same Zenodo deposit as the code,
+under the concept DOI
+[10.5281/zenodo.19870610](https://doi.org/10.5281/zenodo.19870610),
+which always resolves to the latest archived version.
 
-- Concept DOI (always resolves to latest version):
-  [10.5281/zenodo.19870610](https://doi.org/10.5281/zenodo.19870610)
-- Pinned version `v1.0.3`:
-  [10.5281/zenodo.19874536](https://doi.org/10.5281/zenodo.19874536)
+`scripts/download_models.sh` resolves the concept DOI to the latest
+version record at runtime (via the Zenodo REST API), so it does not need
+to be edited when a new release is published. To pin a specific version,
+override `ZENODO_RECORD`:
 
 ```bash
-wget https://zenodo.org/records/19874536/files/pretrained_models.tar.gz
-sha256sum pretrained_models.tar.gz   # verify against above
+# Latest (default)
+make download-models
+
+# Pinned to a specific Zenodo version record
+ZENODO_RECORD=<record-id> make download-models
+```
+
+Manual download (also points at the latest version via concept DOI):
+
+```bash
+# Resolve the latest version record ID, then fetch the binary.
+LATEST=$(curl -sL https://zenodo.org/api/records/19870610 \
+    | grep -oE '"id"[[:space:]]*:[[:space:]]*[0-9]+' | head -1 | grep -oE '[0-9]+')
+wget "https://zenodo.org/records/${LATEST}/files/pretrained_models.tar.gz"
+sha256sum pretrained_models.tar.gz   # verify against above (after upload)
 tar -xzf pretrained_models.tar.gz -C ml/pretrained/
 ```
 
 ### Alternative: GitHub Release (mirror)
 
 ```bash
-gh release download v1.0.3 --repo rider37/dl-amr \
-    --pattern pretrained_models.tar.gz
+gh release download --repo rider37/dl-amr \
+    --pattern pretrained_models.tar.gz   # latest release
 tar -xzf pretrained_models.tar.gz -C ml/pretrained/
 ```
 
