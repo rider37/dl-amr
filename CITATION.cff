@@ -39,7 +39,14 @@ preferred-citation:
   doi: "10.xxxx/yyyy"  # TODO: replace with the journal-issued DOI after JCP publication
 repository-code: "https://github.com/rider37/dl-amr"
 version: 1.1.0
-date-released: 2026-09-10
+date-released: 2026-09-12
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.19870610"
+    description: "Zenodo concept DOI (all versions)"
+  - type: doi
+    value: "10.5281/zenodo.22724267"
+    description: "Zenodo version DOI, v1.1.0"
 # Note: this repository is multi-licensed (MIT for Python code, GPL v3 for the
 # OpenFOAM-derived solver, CC-BY 4.0 for data/model/docs). CITATION.cff only
 # accepts a single SPDX identifier, so we declare the primary code license here

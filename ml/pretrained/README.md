@@ -34,8 +34,8 @@ override `ZENODO_RECORD`:
 # Latest (default)
 make download-models
 
-# Pinned to a specific Zenodo version record
-ZENODO_RECORD=<record-id> make download-models
+# Pinned to the v1.1.0 version record
+ZENODO_RECORD=22724267 make download-models
 ```
 
 Manual download (also points at the latest version via concept DOI):

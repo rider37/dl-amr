@@ -95,4 +95,5 @@ DOI: 10.xxxx/yyyy   # TODO: replace after JCP publication
 
 Software DOI (Zenodo, concept — always resolves to the latest archived
 version of the deposit): 10.5281/zenodo.19870610
+Version DOI of the release matching the revised manuscript (v1.1.0): 10.5281/zenodo.22724267
 ```
