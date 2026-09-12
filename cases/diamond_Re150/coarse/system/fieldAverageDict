@@ -23,7 +23,7 @@ functions
         libs            (fieldFunctionObjects);
         enabled         true;
         log             true;
-        timeStart       294.5;
+        timeStart       294.1;
         executeControl  timeStep;
         executeInterval 1;
         writeControl    timeStep;

@@ -8,7 +8,7 @@ FoamFile
 
 application     pimpleFoam;
 
-startFrom       latestTime;
+startFrom       startTime;
 startTime       0;
 
 stopAt          endTime;

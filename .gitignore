@@ -38,6 +38,12 @@ __pycache__/
 *.zip
 *.npz
 
+# Downloaded reference archives (make download-*)
+/reference_data/test.pt
+/reference_data/preds/
+/reference_data/fields/
+/analysis/output/
+
 # Allow small committed reference samples (only under reference_data/samples/).
 # Larger archives such as reference_data/test.pt and reference_data/preds/*.npz
 # are obtained via `make download-reference` and must NOT be committed.
@@ -73,3 +79,6 @@ __pycache__/
 .idea/
 *.swp
 *~
+
+# figure-script phase-average cache
+/analysis/figscripts/.pa_cache_*.pkl

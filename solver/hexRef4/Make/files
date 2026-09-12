@@ -1,0 +1,6 @@
+hexRef4/hexRef4.C
+hexRef4/hexRef4Data.C
+
+dynamicRefine2DFvMesh/dynamicRefine2DFvMesh.C
+
+LIB = $(FOAM_USER_LIBBIN)/libhexRef4

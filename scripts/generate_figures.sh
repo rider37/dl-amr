@@ -1,66 +1,29 @@
 #!/bin/sh
-# Regenerate paper figures from analysis scripts.
-# Requires reference data: run `make download-reference` first
-# (see reference_data/README.md for the expected file layout).
+# Regenerate the paper figures from the downloaded reference data.
+#   Tier 2 (make download-reference):  Figs 9, 10, E.1        -> analysis/uncertainty_figures.py
+#   Tier 2 (make download-fields):     Figs 4, 5, 8, D.1, F.1 -> analysis/figscripts/{make_fig4_D1,make_fig5,make_fig8_F1}.py
+#   Tier 3 (raw case results):         Figs 3, 6, 7           -> analysis/figscripts/{make_fig3_6,make_fig7}.py
+# Scripts whose data are absent print [SKIP] and exit with code 2.
 #
-# Output directory:
-#   $DL_AMR_OUTDIR (default: analysis/output/)
-# Python interpreter:
-#   $PYTHON          (default: auto-detect 'python' then 'python3')
-
+#   $DL_AMR_OUTDIR  output directory (default: analysis/output/)
+#   $DLAMR_REFDATA  reference_data/ (test.pt, preds/)
+#   $DLAMR_CACHE    reference_data/fields/
+#   $DLAMR_CASES    cases/ (raw results)
+#   $PYTHON         interpreter (default: python, then python3)
 set -e
 cd "$(dirname "$0")/.."
-
-if [ -n "$PYTHON" ]; then
-    PY="$PYTHON"
-elif command -v python >/dev/null 2>&1; then
-    PY=python
-elif command -v python3 >/dev/null 2>&1; then
-    PY=python3
-else
-    echo "ERROR: neither 'python' nor 'python3' found in PATH (set \$PYTHON to override)"
-    exit 1
-fi
-
-OUTDIR="${DL_AMR_OUTDIR:-analysis/output}"
-mkdir -p "$OUTDIR"
-echo "Output directory: $OUTDIR"
-echo "Python:           $PY ($($PY --version 2>&1))"
-echo ""
-
-# Order: lighter figures first, OpenFOAM-data-heavy ones last.
-SCRIPTS="
-generate_fig6_error_vs_dof.py
-generate_fig9_10_11_uncertainty.py
-generate_fig12_threshold_sensitivity.py
-generate_fig1_7_overview.py
-generate_fig3_phase_averaged.py
-generate_fig4_5_instantaneous_and_umean.py
-generate_fig8_anchor_variants.py
-"
-
-passed=0
-skipped=0
-failed=0
-# Loop with set +e so individual script exits don't abort the orchestrator.
-set +e
+if [ -n "$PYTHON" ]; then PY="$PYTHON";
+elif command -v python >/dev/null 2>&1; then PY=python;
+elif command -v python3 >/dev/null 2>&1; then PY=python3;
+else echo "ERROR: no python interpreter found (set \$PYTHON)"; exit 1; fi
+OUTDIR="${DL_AMR_OUTDIR:-analysis/output}"; mkdir -p "$OUTDIR"; export DL_AMR_OUTDIR="$OUTDIR"
+echo "Output directory: $OUTDIR"; echo "Python: $PY ($($PY --version 2>&1))"; echo ""
+SCRIPTS="analysis/uncertainty_figures.py analysis/figscripts/make_fig4_D1.py analysis/figscripts/make_fig5.py analysis/figscripts/make_fig8_F1.py analysis/figscripts/make_fig3_6.py analysis/figscripts/make_fig7.py"
+passed=0; skipped=0; failed=0; set +e
 for s in $SCRIPTS; do
-    echo "=== Running analysis/$s ==="
-    "$PY" analysis/$s
-    rc=$?
-    case $rc in
-        0)  passed=$((passed+1)) ;;
-        2)  skipped=$((skipped+1)); echo "  --> SKIPPED (reference data not available)" ;;
-        *)  failed=$((failed+1));  echo "  --> FAILED (exit $rc)" ;;
-    esac
+    echo "=== $s ==="; "$PY" "$s"; rc=$?
+    case $rc in 0) passed=$((passed+1)) ;; 2) skipped=$((skipped+1)); echo "  --> SKIPPED (data not available)" ;; *) failed=$((failed+1)); echo "  --> FAILED (exit $rc)" ;; esac
     echo ""
 done
-
-echo "==================================================="
-echo "  Result: $passed produced, $skipped skipped, $failed failed"
-echo "  Output: $OUTDIR"
-echo "==================================================="
-if [ "$skipped" -gt 0 ]; then
-    echo "Note: skipped scripts need reference data — see reference_data/README.md."
-fi
+echo "==================================================="; echo "  Result: $passed produced, $skipped skipped, $failed failed"; echo "  Output: $OUTDIR"; echo "==================================================="
 [ "$failed" -eq 0 ] || exit 1

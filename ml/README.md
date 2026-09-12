@@ -27,9 +27,10 @@ The modules use intra-package imports (`from ml.src.X import ...`). Run from
 the **repo root** as Python modules:
 
 ```bash
-python -m ml.src.train --config ml/configs/train_delta_hetero_star_uvp_wake_re100_150_nll_lr3e4.yaml
-python -m ml.src.eval  --config ml/configs/eval_delta_hetero_star_uvp_wake_re100_150_nll_lr3e4.yaml
-python -m ml.src.infer --config ml/configs/infer_delta_hetero_star_uvp_wake_re100_150_nll_lr3e4.yaml
+python -m ml.src.dataloaders.build_nc_delta --cases cases --output ml/data/processed/nc_delta_uv_uni
+python -m ml.src.train --config ml/configs/train_nc_delta_hetero.yaml     # run used in the paper (seed 517)
+python -m ml.src.infer --config ml/configs/infer_nc_delta_hetero.yaml     # writes preds/*.npz for the test block
+python -m ml.src.eval  --config ml/configs/eval_nc_delta_hetero.yaml
 ```
 
 ## Dataset format
@@ -38,21 +39,26 @@ Training and evaluation expect a preprocessed dataset directory containing:
 
 | File                  | Format         | Contents                                              |
 |-----------------------|----------------|-------------------------------------------------------|
-| `train.pt`            | `torch.save`   | dict with `X: (N, 3, 64, 224)`, `y: (N, 3, 64, 224)`, `mask: (N, 64, 224)` |
+| `train.pt`            | `torch.save`   | dict with `X: (N, 2, 160, 432)`, `y: (N, 2, 160, 432)`, `mask: (N, 1, 160, 432)` |
 | `val.pt`              | `torch.save`   | same schema                                            |
 | `test.pt`             | `torch.save`   | same schema                                            |
-| `norm_stats.json`     | JSON           | per-channel mean/std for input $(u^\ast, v^\ast, p^\ast)$ |
-| `target_norm.json`    | JSON           | per-channel mean/std for target $\Delta\mathbf{q}_t$    |
+| `norm_stats.json`     | JSON           | per-channel mean/std for input $(u^\ast, v^\ast)$      |
+| `target_norm.json`    | JSON           | per-channel mean/std for the target residual            |
+| `blocked_split_ids.json` | JSON        | snapshot indices of the chronological train/val/test blocks |
 
-- `x` channels: $(u^\ast, v^\ast, p^\ast) = (U_x/U_\infty, U_y/U_\infty, p/(\rho U_\infty^2))$
-- `y` channels: $\Delta\mathbf{q}_t = \mathbf{q}_{t+1} - \mathbf{q}_t$
-- Spatial grid: uniform Cartesian $64 \times 224$ covering the wake region
-  $x/D \in [2, 39]$, $y/D \in [-5, 5]$.
-- The grid is obtained by resampling instantaneous OpenFOAM snapshots from
-  `cases/circular_Re100/fine` and `cases/circular_Re150/fine` (the latter
-  is not in the paper case set; generate at $Re = 100, 150$ using the
-  same case template as `circular_Re200/fine` with the `nu` value in
-  `constant/transportProperties` adjusted accordingly).
+- `x` channels: $(u^\ast, v^\ast) = (U_x/U_\infty, U_y/U_\infty)$. Pressure is excluded
+  because the remapping transients of dynamic refinement contaminate it.
+- `y` channels: mesh-induced residual
+  $\mathbf{q}^{\mathrm{fine}} - \mathbf{q}^{\mathrm{coarse}}$, with snapshots paired by
+  instantaneous shedding phase.
+- Spatial grid: uniform Cartesian $432 \times 160$ covering
+  $x/D \in [-2, 25]$, $y/D \in [-5, 5]$.
+- The dataset is built by `ml/src/dataloaders/build_nc_delta.py` from the
+  coarse and fine training cases `cases/circular_Re{100,150}/{coarse,fine}`:
+  both are sampled onto the grid, coarse and fine snapshots are paired by the
+  Hilbert phase of the lift signal, and the pairs are split into contiguous
+  chronological blocks (80/10/10 %). The "fine" training case is the medium
+  mesh of the grid-convergence study (Section 2.2 of the paper).
 
 The `dataset_path` field in each YAML config points to the directory
 holding these files; override per run with command-line YAML override.

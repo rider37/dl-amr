@@ -7,11 +7,11 @@ FoamFile
     object      dynamicMeshDict;
 }
 
-dynamicFvMesh   dynamicRefineFvMesh;
+dynamicFvMesh   dynamicRefine2DFvMesh;
 
-dynamicRefineFvMeshCoeffs
+dynamicRefine2DFvMeshCoeffs
 {
-    refineInterval  10;
+    refineInterval  40;
 
     field           refineFlag;
 
@@ -22,20 +22,21 @@ dynamicRefineFvMeshCoeffs
 
     nBufferLayers   2;
 
-    maxRefinement   1;
+    maxRefinement   2;
 
-    maxCells        160000;
+    maxCells        200000;
 
     correctFluxes
     (
         (phi none)
         (phi_0 none)
+        (phi_0_0 none)
         (ghf none)
     );
 
     dumpLevel       true;
 
-    protectMode     rect;
+    protectMode     none;
     protectMin      (-2 -2 -0.5);
     protectMax      (2 2 0.5);
 }

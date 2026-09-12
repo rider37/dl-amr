@@ -1,14 +1,13 @@
 #!/usr/bin/env bash
+# square_Re150 / grad_amr  --  restart run, 142.5 -> 347
 set -euo pipefail
-
 cd "$(dirname "$0")"
 
-blockMesh > log.blockMesh 2>&1
-checkMesh > log.checkMesh 2>&1
-postProcess -dict system/gradUDict -fields '(U)' -time 0 > log.gradUInit 2>&1
-
-if [ -x /usr/bin/time ]; then
-    /usr/bin/time -v protectedPimpleFoam > log.pimpleFoam 2> log.time
-else
-    protectedPimpleFoam > log.pimpleFoam 2>&1
+if [ ! -d "142.5" ]; then
+    echo "ERROR: restart state '142.5/' not found."
+    echo "Adaptive and static variants restart from a common coarse-mesh state."
+    echo "See ../README.md ('Restart protocol')."
+    exit 1
 fi
+
+pimpleFoam > log.pimpleFoam 2>&1

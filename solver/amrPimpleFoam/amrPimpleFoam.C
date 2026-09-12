@@ -16,6 +16,7 @@ License
 #include "torch/script.h"
 #include <ATen/Context.h>
 #include "fvCFD.H"
+#include "clockTime.H"
 #include "dynamicFvMesh.H"
 #include "singlePhaseTransportModel.H"
 #include "turbulentTransportModel.H"
@@ -64,6 +65,10 @@ int main(int argc, char *argv[])
 
     Info<< "\nStarting time loop\n" << endl;
 
+    // [REV] set when the mesh topology changed since the grid->cell index
+    // cache was last built; forces a rebuild before the next AI sampling
+    bool topoChangedSinceIdx = true;
+
         // Disable cuDNN for stability (debug) - keep CUDA, but avoid cuDNN engine issues
         at::globalContext().setUserEnabledCuDNN(false);
         Info<< "[AI DEBUG] cuDNN disabled via at::globalContext()" << nl;
@@ -99,6 +104,14 @@ int main(int argc, char *argv[])
         else if (dyMDict.found("dynamicRefineBalancedFvMeshCoeffs"))
         {
             const dictionary& refineDict = dyMDict.subDict("dynamicRefineBalancedFvMeshCoeffs");
+            if (refineDict.found("refineInterval"))
+            {
+                refineInterval = readLabel(refineDict.lookup("refineInterval"));
+            }
+        }
+        else if (dyMDict.found("dynamicRefine2DFvMeshCoeffs"))
+        {
+            const dictionary& refineDict = dyMDict.subDict("dynamicRefine2DFvMeshCoeffs");
             if (refineDict.found("refineInterval"))
             {
                 refineInterval = readLabel(refineDict.lookup("refineInterval"));
@@ -191,10 +204,29 @@ int main(int argc, char *argv[])
                 }
 
                 // Generate refineFlag only if mesh is about to refine
+                clockTime aiClock;
+                scalar tPre = 0, tIdx = 0, tSample = 0, tPrep = 0, tFwd = 0, tFlag = 0;
+
                 if (meshWillRefine)
                 {
                     Info<< "\n>>> MESH REFINEMENT IMMINENT - GENERATING REFINEFLAG <<<" << endl;
                     Info<< "    Timestep: " << runTime.timeIndex() << endl;
+                    {
+                        // 진단: 추론 입력이 될 압력장의 상태 (크롭 내)
+                        scalar pMin = GREAT, pMax = -GREAT;
+                        const vectorField& Cc = mesh.C();
+                        forAll(p, ci)
+                        {
+                            const point& q = Cc[ci];
+                            if (q.x() >= 2 && q.x() <= 39 && mag(q.y()) <= 5)
+                            {
+                                pMin = min(pMin, p[ci]);
+                                pMax = max(pMax, p[ci]);
+                            }
+                        }
+                        Info<< "    PSTAT crop p: [" << pMin << ", "
+                            << pMax << "]" << endl;
+                    }
                     
                     // Load ML configuration on first use
                     if (!mlConfigLoaded)
@@ -482,6 +514,8 @@ int main(int argc, char *argv[])
                             tCurlU().component(vector::Z)
                         );
                         
+                        tPre = aiClock.timeIncrement();
+
                         // Sample and inference
                         if (sampleNearest && useCuda)
                         {
@@ -493,14 +527,19 @@ int main(int argc, char *argv[])
                             static boundBox lastRegionBb;
                             static bool lastUseRegion = false;
 
-                            // Aggressive cache: build indices only on first use,
-                            // and reuse even after mesh refinement for speed.
-                            const bool needRebuildIdx = !cacheValid;
+                            // [REV] Rebuild the grid->cell index cache whenever
+                            // the mesh topology has changed. The original
+                            // "aggressive cache" reused indices across topology
+                            // changes, which can sample from renumbered cells.
+                            const bool needRebuildIdx =
+                                !cacheValid
+                             || topoChangedSinceIdx
+                             || (lastNCellsgpu != mesh.nCells());
 
                             if (needRebuildIdx)
                             {
                                 if (useRegion) {
-                                    makeGridAndCellIdx(mesh, NX, NY, ggIdxCache, cellIdxCache, regionBb);
+                                    makeGridAndCellIdxFast(mesh, NX, NY, ggIdxCache, cellIdxCache, regionBb);
                                 } else {
                                     makeGridAndCellIdx(mesh, NX, NY, ggIdxCache, cellIdxCache);
                                 }
@@ -510,7 +549,9 @@ int main(int argc, char *argv[])
                                 lastNCellsgpu = mesh.nCells();
                                 lastRegionBb = regionBb;
                                 lastUseRegion = useRegion;
+                                topoChangedSinceIdx = false;
                             }
+                            tIdx = aiClock.timeIncrement();
 
                             const GridGeom& ggIdx = ggIdxCache;
                             const List<label>& cellIdx = cellIdxCache;
@@ -582,6 +623,8 @@ int main(int argc, char *argv[])
                                     aVortCh[i] = 0.0f;
                                 }
                             }
+
+                            tSample = aiClock.timeIncrement();
 
                             // 4) Move channels to CUDA (non-blocking)
                             devUxCh.copy_(hostUxCh, /*non_blocking=*/true);
@@ -711,6 +754,7 @@ int main(int argc, char *argv[])
                                           .to(aiDevice);
                             }
                             x = x.contiguous();
+                            tPrep = aiClock.timeIncrement();
 
                             // --- DEBUG: log input/weights device, shape ---
                             Info<< "\n[AI DEBUG] --- Input tensor info ---" << nl;
@@ -799,6 +843,8 @@ int main(int argc, char *argv[])
                                      << ", mean=" << (uSum/attnImg.size()) << endl;
                             }
 
+                            tFwd = aiClock.timeIncrement();
+
                             // Generate refineFlag
                             Info<< "Generating refineFlag field..." << endl;
                             makeAndWriteRefineFlag(mesh, attnImg, ggIdx, NX, NY,
@@ -816,6 +862,14 @@ int main(int argc, char *argv[])
                                      << ", max=" << rMax
                                      << ", mean=" << (rSum/rf.size()) << endl;
                             }
+                            tFlag = aiClock.timeIncrement();
+                            Info<< "[AI TIMING] pre=" << tPre
+                                << " idxRebuild=" << tIdx
+                                << " sample=" << tSample
+                                << " prep=" << tPrep
+                                << " fwd=" << tFwd
+                                << " flag=" << tFlag
+                                << " s" << endl;
                         }
                         else
                         {
@@ -929,11 +983,18 @@ int main(int argc, char *argv[])
                 }
                 
                 // Now perform mesh changes (this will use the refineFlag we just generated)
+                clockTime muClock;
                 mesh.controlledUpdate();
+                if (meshWillRefine)
+                {
+                    Info<< "[AI TIMING] meshUpdate=" << muClock.elapsedTime()
+                        << " s" << endl;
+                }
 
                 if (mesh.changing())
                 {
                     Info<< "Mesh topology change detected" << endl;
+                    topoChangedSinceIdx = true;
                     // Keep refineFlag binary after mesh change for clean visualization
                     {
                         scalarField& rf = refineFlag.primitiveFieldRef();

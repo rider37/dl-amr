@@ -270,6 +270,93 @@ inline void makeGridAndCellIdx(
     }
 }
 
+// [REV] Fast rebuildable grid->cell mapping: O(nCells + nx*ny) instead of
+// per-point octree searches. Each cell claims its nearest grid node; empty
+// nodes (grid finer than local cells) are filled from neighbouring nodes.
+// Nearest-centre approximation is consistent with the nearest-value sampling
+// used downstream.
+inline void makeGridAndCellIdxFast(
+    const fvMesh& mesh,
+    const label nx, const label ny,
+    GridGeom& gg,
+    List<label>& cellIdx,
+    const boundBox& regionBb
+)
+{
+    makePlaneGrid(mesh, nx, ny, gg, regionBb);
+    const label nPoints = nx*ny;
+    cellIdx.setSize(nPoints);
+    cellIdx = -1;
+    List<scalar> bestDist(nPoints, GREAT);
+
+    const vectorField& C = mesh.C();
+    const scalar dx = max(gg.dx, VSMALL);
+    const scalar dy = max(gg.dy, VSMALL);
+
+    forAll(C, celli)
+    {
+        const point& c = C[celli];
+        const label i = label((c.x() - gg.x0)/dx + 0.5);
+        const label j = label((c.y() - gg.y0)/dy + 0.5);
+        if (i < -1 || i > nx || j < -1 || j > ny) continue;
+        const label ic = min(max(i, label(0)), nx - 1);
+        const label jc = min(max(j, label(0)), ny - 1);
+        const label k = jc*nx + ic;
+        const scalar gx = gg.x0 + dx*ic;
+        const scalar gy = gg.y0 + dy*jc;
+        const scalar d = sqr(c.x() - gx) + sqr(c.y() - gy);
+        if (d < bestDist[k])
+        {
+            bestDist[k] = d;
+            cellIdx[k] = celli;
+        }
+    }
+
+    // Fill unclaimed nodes from claimed neighbours (expanding passes)
+    for (label pass = 0; pass < nx + ny; ++pass)
+    {
+        bool anyEmpty = false;
+        bool changed = false;
+        for (label j = 0; j < ny; ++j)
+        {
+            for (label i = 0; i < nx; ++i)
+            {
+                const label k = j*nx + i;
+                if (cellIdx[k] >= 0) continue;
+                anyEmpty = true;
+                const scalar gx = gg.x0 + dx*i;
+                const scalar gy = gg.y0 + dy*j;
+                scalar best = GREAT;
+                label bestCell = -1;
+                for (label dj = -1; dj <= 1; ++dj)
+                {
+                    for (label di = -1; di <= 1; ++di)
+                    {
+                        const label ii = i + di;
+                        const label jj = j + dj;
+                        if (ii < 0 || ii >= nx || jj < 0 || jj >= ny) continue;
+                        const label kn = jj*nx + ii;
+                        if (cellIdx[kn] < 0) continue;
+                        const point& cn = C[cellIdx[kn]];
+                        const scalar d = sqr(cn.x() - gx) + sqr(cn.y() - gy);
+                        if (d < best)
+                        {
+                            best = d;
+                            bestCell = cellIdx[kn];
+                        }
+                    }
+                }
+                if (bestCell >= 0)
+                {
+                    cellIdx[k] = bestCell;
+                    changed = true;
+                }
+            }
+        }
+        if (!anyEmpty || !changed) break;
+    }
+}
+
 // Sample fields to grid - FIXED VERSION without problematic parallelization
 inline GridSample samplePUtoGrid(
     const fvMesh& mesh,

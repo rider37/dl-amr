@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# circular_Re100 / coarse  --  runs from t = 0
+set -euo pipefail
+cd "$(dirname "$0")"
+
+blockMesh > log.blockMesh 2>&1
+checkMesh > log.checkMesh 2>&1
+pimpleFoam > log.pimpleFoam 2>&1

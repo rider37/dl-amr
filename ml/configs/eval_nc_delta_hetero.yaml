@@ -1,0 +1,7 @@
+dataset_path: ml/data/processed/nc_delta_uv_uni
+split: test
+task: reg
+model_type: hetero_delta
+preds_dir: ml/runs/infer_nc_delta_hetero_test/preds
+report_path: ml/runs/infer_nc_delta_hetero_test/eval_report.json
+norm_stats: ml/data/processed/nc_delta_uv_uni/norm_stats.json

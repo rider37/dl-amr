@@ -5,9 +5,16 @@ are distributed via GitHub Release and Zenodo for archival stability.
 
 ## Files (after download)
 
-| File                          | Type        | Approx. Size | SHA256        | Description                                       |
-|-------------------------------|-------------|-------------:|---------------|---------------------------------------------------|
-| `heteroscedastic_unet.pt`     | TorchScript | 31 MB        | _to be filled after final artifact upload_ | DL-AMR refinement indicator used in the paper     |
+| File                                  | Type          | Approx. Size | Description                                                  |
+|---------------------------------------|---------------|-------------:|--------------------------------------------------------------|
+| `heteroscedastic_unet.pt`             | TorchScript   | 31 MB        | DL-AMR refinement indicator used in the paper. Loaded by `amrPimpleFoam` at runtime; wraps the network with the target-normalisation buffers, so it returns the residual in physical units. |
+| `heteroscedastic_unet_state_dict.pt`  | `state_dict`  | 31 MB        | Same weights, for offline evaluation with `ml.src.models.hetero_model.HeteroDeltaFullRes`. |
+| `train_config.json`                   | JSON          | < 1 KB       | Training configuration of the run that produced these weights. |
+| `norm_stats.json`, `target_norm.json` | JSON          | < 1 KB       | Per-channel input and target normalisation statistics.        |
+| `blocked_split_ids.json`              | JSON          | 14 KB        | Snapshot indices of the contiguous chronological train/val/test blocks. |
+| `vort_grid.ts`, `make_vort_wrapper.py` | TorchScript / Python | 4 KB | Vorticity wrapper of the score ablation (Section 4.6): returns `log(omega_z^2 + 1e-12)` on the sampling grid; contains no trained weights. |
+
+The SHA-256 checksums of the archives are distributed with the deposit as `SHA256SUMS.txt`.
 
 ## Download
 
@@ -56,7 +63,8 @@ tar -xzf pretrained_models.tar.gz -C ml/pretrained/
 import torch
 model = torch.jit.load('ml/pretrained/heteroscedastic_unet.pt')
 model.eval()
-# Input: (B, 3, H, W) tensor of (u*, v*, p*) channels, normalised per train stats
+# Input: (B, 2, H, W) tensor of (u*, v*) channels on the 432 x 160 grid,
+# normalised with norm_stats.json
 mean_pred, logvar_pred = model(x)
 sigma = torch.sqrt(torch.exp(logvar_pred))   # uncertainty map
 ```

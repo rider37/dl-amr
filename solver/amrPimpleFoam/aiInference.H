@@ -2,6 +2,7 @@
 #include <torch/script.h>
 #include "fvCFD.H"
 #include "Resize.H"
+#include "dynamicRefine2DFvMesh.H"
 #include <cmath>
 
 namespace Foam {
@@ -228,63 +229,81 @@ inline void makeAndWriteRefineFlag(
     const bool thrGE
 )
 {
-    Info<< "Generating refineFlag field with threshold " << thr << endl;
-    
+    // --- rank-budget marking ---------------------------------------------------
+    // 'thr' is reinterpreted as a level-weighted cell budget Nbudget, exactly
+    // as in the classical budgetFlag baselines: eligible cells are ranked by
+    // the network's attention value (descending) and marked until the budget
+    // is exhausted.  A level-0 cell splits into 4 children (hexRef4) so it
+    // consumes 4 units; an already-refined cell consumes 1.
+    const label Nbudget = static_cast<label>(thr + 0.5);
+    Info<< "Rank-budget marking, Nbudget = " << Nbudget << endl;
+
     scalarField& rf = refineFlag.primitiveFieldRef();
     const vectorField& Cc = mesh.C();
     const boundBox& regionBb = geom.bb;
-    
-    // Set refine flag based on attention
-    forAll(rf, cellI) {
+
+    const labelList& cellLevel =
+        dynamic_cast<const dynamicRefine2DFvMesh&>(mesh).meshCutter().cellLevel();
+
+    scalarField attnCell(rf.size(), 0.0);
+    DynamicList<label> elig(rf.size());
+
+    forAll(rf, cellI)
+    {
+        rf[cellI] = 0.0;
         const point p = Cc[cellI];
-        if (regionBb.contains(p)) {
-            const scalar a = bilinearSample(attnImg, geom, p);
-            rf[cellI] = (thrGE ? (a >= thr) : (a <= thr)) ? 1.0 : 0.0;
-        } else {
-            // Outside the user-specified extraction region: force 1
-            rf[cellI] = 0.0;
-        }
-        // Force no-refine inside user-defined region (circle or rectangle)
+        if (!regionBb.contains(p)) continue;
+
+        bool blocked = false;
         if (noRefineRadius > 0 || noRefineShape.size())
         {
-            const word shape = toLowerWord(noRefineShape.size() ? noRefineShape : word("circle"));
+            const word shape =
+                toLowerWord(noRefineShape.size() ? noRefineShape : word("circle"));
             if (shape == "circle")
             {
                 const scalar dx = p.x() - noRefineCenter.x();
                 const scalar dy = p.y() - noRefineCenter.y();
-                const scalar r2 = dx*dx + dy*dy;
-                if (r2 <= noRefineRadius*noRefineRadius)
-                {
-                    rf[cellI] = 0.0;
-                }
+                if (dx*dx + dy*dy <= noRefineRadius*noRefineRadius) blocked = true;
             }
             else if (shape == "rect" || shape == "rectangle" || shape == "box")
             {
                 if (p.x() >= noRefineMin.x() && p.x() <= noRefineMax.x() &&
                     p.y() >= noRefineMin.y() && p.y() <= noRefineMax.y())
                 {
-                    rf[cellI] = 0.0;
+                    blocked = true;
                 }
             }
         }
+        if (blocked) continue;
+
+        // thrGE == false means "small attention values are the important ones";
+        // rank on the sign-corrected value so that larger is always better.
+        const scalar a = bilinearSample(attnImg, geom, p);
+        attnCell[cellI] = thrGE ? a : -a;
+        elig.append(cellI);
     }
-    
-    // Count cells to be refined
+
+    labelList order(elig);
+    std::sort
+    (
+        order.begin(), order.end(),
+        [&](label x, label y){ return attnCell[x] > attnCell[y]; }
+    );
+
     label refineCount = 0;
-    forAll(rf, cellI) {
-        if (rf[cellI] > 0.5) refineCount++;
+    label eq = 0;
+    for (const label i : order)
+    {
+        if (eq >= Nbudget) break;
+        rf[i] = 1.0;
+        eq += (cellLevel[i] == 0) ? 4 : 1;
+        refineCount++;
     }
-    Info<< "Initial cells marked for refinement: " << refineCount << endl;
-    
-    // Expand refinement region by rings
-	// (removed unused owner/neighbour/nInt to avoid warnings)
-    
-    // Final count
-    refineCount = 0;
-    forAll(rf, cellI) {
-        if (rf[cellI] > 0.5) refineCount++;
-    }
-    Info<< "Final cells marked for refinement (after ring expansion): " << refineCount << endl;
+
+    Info<< "refineFlag: nSel=" << refineCount
+        << " eq=" << eq << "/" << Nbudget
+        << " elig=" << elig.size()
+        << " nCells=" << mesh.nCells() << endl;
 }
 
 // Load model from file (for compatibility)

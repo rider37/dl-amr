@@ -9,17 +9,17 @@ FoamFile
 application     pimpleFoam;
 
 startFrom       startTime;
-startTime       0;
+startTime       95;
 
 stopAt          endTime;
-endTime         400;
+endTime         256;
 deltaT          0.01;
 adjustTimeStep  yes;
 maxCo           1.0;
 maxDeltaT       0.02;
 
 writeControl    adjustableRunTime;
-writeInterval   0.1;
+writeInterval   1;
 purgeWrite      0;
 writeFormat     ascii;
 writePrecision  8;
@@ -30,12 +30,23 @@ runTimeModifiable true;
 
 functions
 {
+    probesW
+    {
+        type            probes;
+        libs            (sampling);
+        writeControl    timeStep;
+        writeInterval   1;
+        fields          (U p);
+        probeLocations  ( (3 0 0) (5 0 0) (8 0 0) );
+    }
+
+
     forceCoeffs
     {
         type            forceCoeffs;
         libs            ("libforces.so");
-        writeControl    adjustableRunTime;
-        writeInterval   0.1;
+        writeControl    timeStep;
+        writeInterval   1;
         log             true;
 
         patches         (obstacle);
@@ -53,7 +64,7 @@ functions
     fieldAverage1
     {
         type            fieldAverage;
-        timeStart       294.5;
+        timeStart       294.1;
         libs            (fieldFunctionObjects);
         writeControl    writeTime;
         fields

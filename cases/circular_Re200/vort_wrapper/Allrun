@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# circular_Re200 / vort_wrapper  --  restart run, 95 -> 245
+set -euo pipefail
+cd "$(dirname "$0")"
+if [ ! -f constant/vort_grid.ts ]; then echo "ERROR: constant/vort_grid.ts not found."; exit 1; fi
+export TORCH_CUDNN_V8_API_DISABLED=1
+if [ ! -d "95" ]; then
+    echo "ERROR: restart state '95/' not found. Adaptive variants restart from a common coarse-mesh state; see ../README.md ('Restart protocol')."
+    exit 1
+fi
+amrPimpleFoam > log.amrPimpleFoam 2>&1

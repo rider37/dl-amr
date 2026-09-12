@@ -1,7 +1,4 @@
-.PHONY: help install solver download-models download-reference download-artifacts \
-        run-circular-fine run-circular-coarse run-circular-dl-amr run-circular-grad-amr \
-        run-square-fine   run-square-coarse   run-square-dl-amr   run-square-grad-amr \
-        run-diamond-fine  run-diamond-coarse  run-diamond-dl-amr  run-diamond-grad-amr \
+.PHONY: help install solver download-models download-reference download-fields download-artifacts \
         figs smoke-test clean clean-cases
 
 # Python interpreter used by smoke-test and figs targets.
@@ -13,10 +10,11 @@ help:
 	@echo ""
 	@echo "Setup:"
 	@echo "  make install            - install Python environment (env.yml)"
-	@echo "  make solver             - build OpenFOAM solver (amrPimpleFoam)"
+	@echo "  make solver             - build hexRef4 library and OpenFOAM solvers"
 	@echo "  make download-models    - download pretrained models from Zenodo/Release"
-	@echo "  make download-reference - download minimal reference data"
-	@echo "  make download-artifacts - both of the above (one shot)"
+	@echo "  make download-reference - download minimal reference data (Figs 9, 10, E.1)"
+	@echo "  make download-fields    - download cached wake-field data (Figs 4, 5, 8, D.1, F.1)"
+	@echo "  make download-artifacts - all three of the above (one shot)"
 	@echo ""
 	@echo "Quick check:"
 	@echo "  make smoke-test         - quick reproducibility check (no full simulation)"
@@ -25,9 +23,9 @@ help:
 	@echo "  make figs               - regenerate all paper figures from cached data"
 	@echo ""
 	@echo "Full simulations (long-running):"
-	@echo "  make run-{circular,square,diamond}-{fine,coarse,dl-amr,grad-amr}"
-	@echo "  e.g.   make run-circular-fine"
-	@echo "         make run-square-dl-amr"
+	@echo "  make run-<geometry>-<variant>, e.g. run-circular-dl_amr, run-square-static"
+	@echo "  variants: fine coarse grad_amr vort_amr q_amr dl_amr static dl_amr_meanhead (all)"
+	@echo "            vort_wrapper kelly_wake (circular only)"
 	@echo ""
 	@echo "Cleanup:"
 	@echo "  make clean              - remove all build artifacts and case results"
@@ -47,8 +45,8 @@ solver:
 	    echo "  export LIBTORCH_DIR=/path/to/libtorch"; \
 	    exit 1; \
 	fi
+	export FOAM_USER_SRC=$$(pwd)/solver && cd solver/hexRef4 && wmake libso
 	cd solver/amrPimpleFoam && wmake
-	cd solver/protectedPimpleFoam && wmake
 
 download-models:
 	bash scripts/download_models.sh
@@ -56,7 +54,10 @@ download-models:
 download-reference:
 	bash scripts/download_reference_data.sh
 
-download-artifacts: download-models download-reference
+download-fields:
+	bash scripts/download_reference_fields.sh
+
+download-artifacts: download-models download-reference download-fields
 
 smoke-test:
 	PYTHON=$(PYTHON) bash scripts/run_smoke_test.sh
@@ -64,20 +65,10 @@ smoke-test:
 figs:
 	PYTHON=$(PYTHON) bash scripts/generate_figures.sh
 
-run-circular-fine:    ; cd cases/circular_Re200/fine     && ./Allrun
-run-circular-coarse:  ; cd cases/circular_Re200/coarse   && ./Allrun
-run-circular-dl-amr:  ; cd cases/circular_Re200/dl_amr   && ./Allrun
-run-circular-grad-amr:; cd cases/circular_Re200/grad_amr && ./Allrun
-
-run-square-fine:      ; cd cases/square_Re150/fine       && ./Allrun
-run-square-coarse:    ; cd cases/square_Re150/coarse     && ./Allrun
-run-square-dl-amr:    ; cd cases/square_Re150/dl_amr     && ./Allrun
-run-square-grad-amr:  ; cd cases/square_Re150/grad_amr   && ./Allrun
-
-run-diamond-fine:     ; cd cases/diamond_Re150/fine      && ./Allrun
-run-diamond-coarse:   ; cd cases/diamond_Re150/coarse    && ./Allrun
-run-diamond-dl-amr:   ; cd cases/diamond_Re150/dl_amr    && ./Allrun
-run-diamond-grad-amr: ; cd cases/diamond_Re150/grad_amr  && ./Allrun
+# Generic run target: make run-<geometry>-<variant>  (geometry: circular, square, diamond)
+run-circular-%: ; cd cases/circular_Re200/$* && ./Allrun
+run-square-%:   ; cd cases/square_Re150/$*   && ./Allrun
+run-diamond-%:  ; cd cases/diamond_Re150/$*  && ./Allrun
 
 clean-cases:
 	@echo "Cleaning case time directories and outputs..."

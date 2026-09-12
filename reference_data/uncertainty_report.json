@@ -1,76 +1,63 @@
 {
-  "_comment": "Aggregate uncertainty-validation metrics for the heteroscedastic U-Net on the test split. Paths below are descriptive labels (origin of the data); for actual loading use the env vars DL_AMR_TESTPT (test.pt) and DL_AMR_PREDS (per-sample NPZs).",
-  "dataset_label": "cylinder_delta_star_uvp_wake_re100_150",
-  "split": "test",
-  "preds_dir_label": "reference_data/preds",
-  "correlations": {
-    "n_pixels": 11483136,
-    "pearson_sigma_abs_delta_full": 0.7121935164324623,
-    "pearson_sigma_pred_error_full": 0.8328738883968339,
-    "spearman_sigma_abs_delta_sampled": 0.9060934352581856,
-    "spearman_sigma_pred_error_sampled": 0.9158685829282528
+ "model": "heteroscedastic delta U-Net (2-channel input), blocked chronological split",
+ "target": "mesh-induced residual  dq = q_fine - q_coarse",
+ "test_split": {
+  "n_pairs": 252,
+  "n_points": 17368344
+ },
+ "correlations": {
+  "spearman_sigma_vs_abs_delta": 0.8091149333793445,
+  "spearman_sigma_vs_conditional_spread": 0.845020776484212,
+  "pearson_sigma_vs_abs_delta": 0.544827401638031
+ },
+ "auc": {
+  "q90": 0.8594610135326175,
+  "q95": 0.8476383725022897,
+  "q98": 0.844753725743887,
+  "q99": 0.8523941686451292
+ },
+ "error_mass_coverage_by_selected_area_fraction": {
+  "0.05": 0.13190323114395142,
+  "0.10": 0.24606551229953766,
+  "0.15": 0.3526342213153839,
+  "0.20": 0.454314261674881,
+  "0.30": 0.6450194120407104,
+  "0.40": 0.7961924076080322,
+  "0.50": 0.8931300640106201
+ },
+ "cross_geometry_transfer": {
+  "circular Re200 (test)": {
+   "n_pairs": 252,
+   "auc": {
+    "90": 0.8595402558079113,
+    "95": 0.8477385436646891,
+    "98": 0.8448948642389054,
+    "99": 0.8525035892415261
+   },
+   "spearman": 0.8095924657247715,
+   "near_wake_auc_q95": 0.7826749853114572
   },
-  "roc_auc": [
-    {
-      "target_quantile": 90,
-      "tau_abs_delta": 0.019534913823008537,
-      "auc": 0.9364827093903005,
-      "positive_fraction": 0.10000003483369004
-    },
-    {
-      "target_quantile": 95,
-      "tau_abs_delta": 0.028728023171424866,
-      "auc": 0.9522480327694136,
-      "positive_fraction": 0.05000001741684502
-    },
-    {
-      "target_quantile": 98,
-      "tau_abs_delta": 0.044819820672273636,
-      "auc": 0.9666866239034573,
-      "positive_fraction": 0.019999937299357947
-    },
-    {
-      "target_quantile": 99,
-      "tau_abs_delta": 0.06037638336420059,
-      "auc": 0.9762088165086208,
-      "positive_fraction": 0.009999968649678974
-    }
-  ],
-  "sigma_quantiles": {
-    "0": 0.0024787522852420807,
-    "1": 0.0024787522852420807,
-    "5": 0.003934863954782486,
-    "10": 0.004399315919727087,
-    "25": 0.008508486673235893,
-    "50": 0.019646141678094864,
-    "75": 0.07212299108505249,
-    "90": 0.2053302824497223,
-    "95": 0.30705690383911133,
-    "98": 0.49696943163871765,
-    "99": 0.658564031124115,
-    "99.5": 0.8359542489051819,
-    "99.9": 1.4421544075012207,
-    "100": 8.080750465393066
+  "square Re150 (zero-shot)": {
+   "n_pairs": 230,
+   "auc": {
+    "90": 0.814749031908788,
+    "95": 0.8001784007203501,
+    "98": 0.801932624860001,
+    "99": 0.8271730959103325
+   },
+   "spearman": 0.8052181393670802,
+   "near_wake_auc_q95": 0.8593806683458608
   },
-  "abs_delta_quantiles": {
-    "0": 2.3612089705693506e-07,
-    "1": 6.122077138570603e-06,
-    "5": 4.3571159039856866e-05,
-    "10": 9.840273560257629e-05,
-    "25": 0.0003591641434468329,
-    "50": 0.0014023990370333195,
-    "75": 0.006966731045395136,
-    "90": 0.019534913823008537,
-    "95": 0.028728023171424866,
-    "98": 0.044819820672273636,
-    "99": 0.06037638336420059,
-    "99.5": 0.07693292200565338,
-    "99.9": 0.11318867653608322,
-    "100": 0.1794627457857132
-  },
-  "selected_overlay_samples": [
-    110,
-    515,
-    699
-  ]
+  "diamond Re150 (zero-shot)": {
+   "n_pairs": 260,
+   "auc": {
+    "90": 0.9082766514708068,
+    "95": 0.9160836572513578,
+    "98": 0.9290246567544016,
+    "99": 0.9323418951681416
+   },
+   "spearman": 0.7277878572093702,
+   "near_wake_auc_q95": 0.7517994255480878
+  }
+ }
 }

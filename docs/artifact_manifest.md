@@ -11,10 +11,9 @@ and verification metadata.
 | `ml/configs/`                              | YAML configs    | Training, inference, and evaluation settings used in paper   |
 | `ml/pretrained/README.md`                  | Markdown        | Download instructions for the pretrained TorchScript model   |
 | `ml/pretrained/model_card.md`              | Markdown        | Model card (intended use, training data, performance, limits)|
-| `solver/amrPimpleFoam/`                    | C++ source      | OpenFOAM PIMPLE solver with runtime ML inference + AMR       |
-| `cases/<geom>/<method>/`                   | OpenFOAM case   | Initial conditions, properties, solver settings              |
-| `analysis/generate_*.py`                   | Python source   | Figure generation scripts for the paper                      |
-| `analysis/data/`                           | CSV / log       | Sweep summaries and metric tables                            |
+| `solver/amrPimpleFoam/`, `solver/hexRef4/` | C++ source      | OpenFOAM PIMPLE solver with runtime ML inference + rank-budget AMR; in-plane refinement library |
+| `cases/<geom>/<variant>/`                  | OpenFOAM case   | `system/` and `constant/` as run, restart protocol in `cases/README.md` |
+| `analysis/uncertainty_figures.py`, `analysis/figscripts/`, `analysis/postprocessing/` | Python source | Figure scripts and the post-processing pipeline; manifest in `analysis/README.md` |
 | `reference_data/README.md`                 | Markdown        | Download instructions for minimal reference data             |
 | `scripts/*.sh`                             | Shell           | Helpers (download, smoke test, figures)                      |
 | `Makefile`                                 | Makefile        | Top-level reproduction targets                               |
@@ -26,12 +25,11 @@ and verification metadata.
 
 | Artefact                              | Storage                | Approx. size | Format        |
 |---------------------------------------|------------------------|--------------|---------------|
-| `pretrained_models.tar.gz`            | Zenodo, Release        | 31 MB        | TorchScript   |
-| `reference_data_minimal.tar.gz`       | Zenodo, Release        | a few hundred MB | CSV + NPZ |
-| `optional_sweep_templates.tar.gz`     | Release                | ~ MB         | OpenFOAM cases |
+| `pretrained_models.tar.gz`            | Zenodo, Release        | 55 MB        | TorchScript + state_dict + JSON |
+| `reference_data_minimal.tar.gz`       | Zenodo, Release        | 410 MB       | torch.save + NPZ |
+| `reference_data_fields.tar.gz`        | Zenodo, Release        | 65 MB        | NPZ + JSON + LaTeX tables |
 
-Each archive ships with a SHA-256 checksum recorded in
-`ml/pretrained/README.md` (models) and `reference_data/README.md`.
+The SHA-256 checksums of the three archives are distributed with them as `SHA256SUMS.txt`.
 
 ## Available on request
 

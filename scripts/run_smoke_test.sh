@@ -78,7 +78,7 @@ fi
 echo ""
 echo "Case templates (paper geometries)..."
 for geom in circular_Re200 square_Re150 diamond_Re150; do
-    for method in fine coarse dl_amr grad_amr; do
+    for method in fine coarse grad_amr vort_amr q_amr dl_amr static dl_amr_meanhead; do
         d="cases/$geom/$method"
         check "[ -d $d/0 ] && [ -d $d/constant ] && [ -d $d/system ] && [ -f $d/system/blockMeshDict ]" "$geom/$method"
     done
@@ -87,8 +87,10 @@ done
 echo ""
 echo "Training reference cases (circular Re=100,150)..."
 for geom in circular_Re100 circular_Re150; do
-    d="cases/$geom/fine"
-    check "[ -d $d/0 ] && [ -d $d/constant ] && [ -d $d/system ] && [ -f $d/constant/transportProperties ]" "$geom/fine"
+    for method in fine coarse; do
+        d="cases/$geom/$method"
+        check "[ -d $d/0 ] && [ -d $d/constant ] && [ -d $d/system ] && [ -f $d/constant/transportProperties ]" "$geom/$method"
+    done
 done
 
 echo ""

@@ -1,0 +1,199 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+
+application     protectedPimpleFoam;
+
+libs            ("libhexRef4.so");
+
+startFrom       startTime;
+startTime       95;
+
+stopAt          endTime;
+endTime         245;
+deltaT          0.005;
+adjustTimeStep  yes;
+maxCo           0.5;
+maxDeltaT       0.01;
+
+writeControl    adjustableRunTime;
+writeInterval   1;
+purgeWrite      0;
+writeFormat     ascii;
+writePrecision  8;
+writeCompression off;
+timeFormat      general;
+timePrecision   8;
+runTimeModifiable true;
+
+functions
+{
+    probesW
+    {
+        type            probes;
+        libs            (sampling);
+        writeControl    timeStep;
+        writeInterval   1;
+        fields          (U p);
+        probeLocations  ( (3 0 0) (5 0 0) (8 0 0) );
+    }
+
+
+    forceCoeffs
+    {
+        type            forceCoeffs;
+        libs            ("libforces.so");
+        writeControl    timeStep;
+        writeInterval   1;
+        log             true;
+
+        patches         (obstacle);
+        rho             rhoInf;
+        rhoInf          1;
+
+        CofR            (0 0 0);
+        dragDir         (1 0 0);
+        liftDir         (0 1 0);
+        pitchAxis       (0 0 1);
+        magUInf         1;
+        lRef            1;
+        Aref            0.1;
+    }
+
+    budgetFlagFO
+    {
+        type            coded;
+        libs            (utilityFunctionObjects);
+        name            budgetFlag_NC49k_Q;
+        executeControl  timeStep;
+        executeInterval 1;
+        writeControl    none;
+
+        codeInclude
+        #{
+            #include "dynamicRefine2DFvMesh.H"
+        #};
+        codeOptions
+        #{
+            -I$(LIB_SRC)/finiteVolume/lnInclude \
+            -I$(LIB_SRC)/meshTools/lnInclude \
+            -I$(LIB_SRC)/dynamicMesh/lnInclude \
+            -I$(LIB_SRC)/dynamicFvMesh/lnInclude \
+            -I$(FOAM_USER_SRC)/hexRef4/lnInclude
+        #};
+        codeLibs
+        #{
+            -ldynamicFvMesh \
+            -ldynamicMesh \
+            -L$(FOAM_USER_LIBBIN) -lhexRef4
+        #};
+
+        codeExecute
+        #{
+            const fvMesh& mesh = refCast<const fvMesh>(obr_);
+            const volVectorField& U = mesh.lookupObject<volVectorField>("U");
+            const labelList& cellLevel =
+                dynamic_cast<const dynamicRefine2DFvMesh&>(mesh)
+                    .meshCutter().cellLevel();
+
+        const volTensorField gradU(fvc::grad(U));
+        const scalarField indf((0.5*(sqr(tr(gradU)) - tr(gradU & gradU)))().primitiveField());
+
+            if (!mesh.foundObject<volScalarField>("budgetFlag"))
+            {
+                volScalarField* fPtr = new volScalarField
+                (
+                    IOobject
+                    (
+                        "budgetFlag",
+                        mesh.time().timeName(),
+                        mesh,
+                        IOobject::NO_READ,
+                        IOobject::AUTO_WRITE
+                    ),
+                    mesh,
+                    dimensionedScalar(dimless, Zero)
+                );
+                fPtr->store();
+            }
+            volScalarField& flag =
+                mesh.lookupObjectRef<volScalarField>("budgetFlag");
+
+            // Top-m cell-count budget (reviewer 1's percentile criterion)
+            const label Nbudget = 28763;
+            const vectorField& C = mesh.C();
+
+            DynamicList<label> elig(mesh.nCells());
+            forAll(indf, i)
+            {
+                const point& p = C[i];
+                const bool inProtect =
+                    (p.x() >= -2 && p.x() <= 2 && p.y() >= -2 && p.y() <= 2);
+                (void)inProtect; elig.append(i);
+            }
+            labelList order(elig);
+            std::sort
+            (
+                order.begin(), order.end(),
+                [&](label a, label b){ return indf[a] > indf[b]; }
+            );
+
+            // level-weighted budget: an unrefined (level-0) cell will split
+            // into 8 children, so it consumes 8 budget units; an already
+            // refined (level-1) cell consumes 1. This keeps the projected
+            // refined-cell total constant through the initial transient.
+            scalarField& ff = flag.primitiveFieldRef();
+            ff = 0.0;
+            label nSel = 0;
+            label eq = 0;
+            for (const label i : order)
+            {
+                if (eq >= Nbudget) break;
+                ff[i] = 1.0;
+                eq += (cellLevel[i] < 2) ? 4 : 1;
+                nSel++;
+            }
+            flag.correctBoundaryConditions();
+            Info<< "budgetFlag[NC49k_Q]: nSel=" << nSel
+                << " eq=" << eq << "/" << Nbudget
+                << " nCells=" << mesh.nCells() << nl;
+        #};
+    }
+
+    readFlagFO
+    {
+        type            readFields;
+        libs            (fieldFunctionObjects);
+        fields          (budgetFlag);
+        readOnStart     true;
+        executeControl  none;
+        writeControl    none;
+    }
+
+    fieldAverage1
+    {
+        type            fieldAverage;
+        timeStart       1e6;
+        libs            (fieldFunctionObjects);
+        writeControl    writeTime;
+        fields
+        (
+            U
+            {
+                mean        on;
+                prime2Mean  on;
+                base        time;
+            }
+            p
+            {
+                mean        on;
+                prime2Mean  off;
+                base        time;
+            }
+        );
+    }
+}

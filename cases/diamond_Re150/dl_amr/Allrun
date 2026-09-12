@@ -1,23 +1,19 @@
 #!/usr/bin/env bash
+# diamond_Re150 / dl_amr  --  restart run, 95 -> 256
 set -euo pipefail
-
 cd "$(dirname "$0")"
 
-# Verify pretrained model is present (downloaded via 'make download-models')
 if [ ! -f constant/model.ts ]; then
-    echo "ERROR: constant/model.ts not found."
-    echo "Either run 'make download-models' from the repo root, or symlink:"
-    echo "  ln -sf \$(pwd)/../../../ml/pretrained/heteroscedastic_unet.pt constant/model.ts"
+    echo "ERROR: constant/model.ts not found. Run 'make download-models' from the repo root."
+    exit 1
+fi
+export TORCH_CUDNN_V8_API_DISABLED=1
+
+if [ ! -d "95" ]; then
+    echo "ERROR: restart state '95/' not found."
+    echo "Adaptive and static variants restart from a common coarse-mesh state."
+    echo "See ../README.md ('Restart protocol')."
     exit 1
 fi
 
-blockMesh > log.blockMesh 2>&1
-checkMesh > log.checkMesh 2>&1
-
-if [ -x /usr/bin/time ]; then
-    export TORCH_CUDNN_V8_API_DISABLED=1
-    /usr/bin/time -v amrPimpleFoam > log.pimpleFoam 2> log.time
-else
-    export TORCH_CUDNN_V8_API_DISABLED=1
-    amrPimpleFoam > log.pimpleFoam 2>&1
-fi
+amrPimpleFoam > log.amrPimpleFoam 2>&1

@@ -1,13 +1,8 @@
 #!/usr/bin/env bash
+# square_Re150 / coarse  --  runs from t = 0
 set -euo pipefail
-
 cd "$(dirname "$0")"
 
 blockMesh > log.blockMesh 2>&1
 checkMesh > log.checkMesh 2>&1
-
-if [ -x /usr/bin/time ]; then
-    /usr/bin/time -v pimpleFoam > log.pimpleFoam 2> log.time
-else
-    pimpleFoam > log.pimpleFoam 2>&1
-fi
+pimpleFoam > log.pimpleFoam 2>&1

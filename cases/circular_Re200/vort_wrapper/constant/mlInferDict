@@ -1,0 +1,21 @@
+FoamFile { version 2.0; format ascii; class dictionary; location "constant"; object mlInferDict; }
+mlInferDict
+{
+    modelPath       "constant/vort_grid.ts";
+    useCp           false;
+    useVorticity    false;
+    uncStats        true;
+    uncUseSigma     true;
+    refineMode      sigma;
+    NX              432;
+    NY              160;
+    sampleMethod    nearest;
+    useRegion       true;
+    regionMin       (-2 -5 -0.5);
+    regionMax       (25 5 0.5);
+    attnThr         30160;
+    thrIsGE         true;
+    noRefineShape   none;
+    ompThreads      1;
+    cudnnEnabled    false;
+}

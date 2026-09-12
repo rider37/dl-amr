@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-title: "DL-AMR: Heteroscedastic Temporal-Residual Learning for Dynamic Adaptive Mesh Refinement in Bluff-Body Wake Flows"
+title: "DL-AMR: Heteroscedastic Residual Learning for Dynamic Adaptive Mesh Refinement in Bluff-Body Wake Flows"
 message: "If you use this software or data, please cite the following paper."
 type: software
 authors:
@@ -33,11 +33,13 @@ preferred-citation:
       given-names: Joongoo
     - family-names: Lee
       given-names: Sangseung
-  title: "Heteroscedastic Temporal-Residual Learning for Dynamic Adaptive Mesh Refinement in Bluff-Body Wake Flows"
+  title: "Heteroscedastic Residual Learning for Dynamic Adaptive Mesh Refinement in Bluff-Body Wake Flows"
   journal: "Journal of Computational Physics"
   year: 2026
   doi: "10.xxxx/yyyy"  # TODO: replace with the journal-issued DOI after JCP publication
 repository-code: "https://github.com/rider37/dl-amr"
+version: 1.1.0
+date-released: 2026-09-10
 # Note: this repository is multi-licensed (MIT for Python code, GPL v3 for the
 # OpenFOAM-derived solver, CC-BY 4.0 for data/model/docs). CITATION.cff only
 # accepts a single SPDX identifier, so we declare the primary code license here

@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# square_Re150 / dl_amr_meanhead  --  restart run, 142.5 -> 347
+set -euo pipefail
+cd "$(dirname "$0")"
+if [ ! -f constant/model.ts ]; then echo "ERROR: constant/model.ts not found. Run 'make download-models' from the repo root."; exit 1; fi
+export TORCH_CUDNN_V8_API_DISABLED=1
+if [ ! -d "142.5" ]; then
+    echo "ERROR: restart state '142.5/' not found. Adaptive variants restart from a common coarse-mesh state; see ../README.md ('Restart protocol')."
+    exit 1
+fi
+amrPimpleFoam > log.amrPimpleFoam 2>&1
