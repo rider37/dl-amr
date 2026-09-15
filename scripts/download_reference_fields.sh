@@ -1,6 +1,6 @@
 #!/bin/sh
 # Download the cached wake-field data (time-averaged fields, probe series, tables)
-# used by Figs 4, 5, 8, D.1 and F.1 (see reference_data/README.md).
+# used by Figs 4, 5, 7, D.1 and F.1 (see reference_data/README.md).
 #
 # Tarball layout (extracted at repo root):
 #   reference_data/fields/nc4x_fig_cache/, c7/, tables/, *.json

@@ -5,14 +5,13 @@ lists the script, the data it needs and the download target that provides that d
 
 | Paper item | Script | Data needed | Provided by |
 |---|---|---|---|
-| Fig. 9 (calibration, ROC) | `uncertainty_figures.py` | `reference_data/test.pt`, `reference_data/preds/` | `make download-reference` |
-| Fig. 10 (error capture, AUC vs quantile) | `uncertainty_figures.py` | same | `make download-reference` |
+| Fig. 8 (calibration, ROC) | `uncertainty_figures.py` | `reference_data/test.pt`, `reference_data/preds/` | `make download-reference` |
+| Fig. 9 (error capture, AUC vs quantile) | `uncertainty_figures.py` | same | `make download-reference` |
 | Fig. E.1 (spatial maps) | `uncertainty_figures.py` | same | `make download-reference` |
 | Fig. 4 (error maps), Fig. D.1 (profiles) | `figscripts/make_fig4_D1.py` | `reference_data/fields/nc4x_fig_cache/` | `make download-fields` |
 | Fig. 5 (error vs cells, vs cost) | `figscripts/make_fig5.py` | `nc4x_fig_cache/`, `fields/tables/runtime.tex` | `make download-fields` |
-| Fig. 8 (convection velocity), Fig. F.1 (St(t)) | `figscripts/make_fig8_F1.py` | `fields/c7/*.json` | `make download-fields` |
+| Fig. 7 (convection velocity), Fig. F.1 (St(t)) | `figscripts/make_fig7_F1.py` | `fields/c7/*.json` | `make download-fields` |
 | Fig. 3 (phase-averaged fields), Fig. 6 (vorticity + mesh) | `figscripts/make_fig3_6.py` | raw case results (`cases/<geom>/<variant>/`), `fields/finest_probe.json` | run the cases, or request the results |
-| Fig. 7 (force spectra) | `figscripts/make_fig7.py` | raw `postProcessing/forceCoeffs` | run the cases |
 | Table 1 (wake accuracy) | `postprocessing/nc2_metrics*.py` → `build_ssot.py` → `make_tables.py` | raw case results | run the cases |
 | Table 2 (wake dynamics) | `postprocessing/wake_dynamics_table2.py` → `make_tables.py` | raw results, probes, force histories | run the cases |
 | Table 3 (cross-geometry transfer) | `postprocessing/cross_geometry_table3.py` (square/diamond) with `g6_uncertainty.py` (circular test block) | test split + square/diamond fine and coarse fields | run the cases |

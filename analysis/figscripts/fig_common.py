@@ -8,7 +8,7 @@ the authors' machine and on a fresh clone:
                   (time-averaged fields), ``c7/*.json`` (shedding frequency, convection
                   velocity), ``finest_probe.json``, ``tables/runtime.tex``.
 ``DLAMR_CASES``   root of the OpenFOAM case results (default ``cases/``); only needed by the
-                  scripts that read raw fields or force histories (Figs. 3, 6, 7).
+                  scripts that read raw fields or force histories (Figs. 3, 6).
 ``DL_AMR_OUTDIR`` output directory (default ``analysis/output``).
 """
 from __future__ import annotations

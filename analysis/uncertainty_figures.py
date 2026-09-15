@@ -3,8 +3,8 @@
 
 Reproduces, from ``reference_data/test.pt`` and ``reference_data/preds/*.npz`` alone:
 
-* Fig. 9  -- calibration curve (a) and ROC curve for the top 5 % of |dq| (b)
-* Fig. 10 -- offline error capture against selected area (a) and AUC against the
+* Fig. 8  -- calibration curve (a) and ROC curve for the top 5 % of |dq| (b)
+* Fig. 9  -- offline error capture against selected area (a) and AUC against the
              positive-class quantile (b)
 * Fig. E.1 -- spatial maps of |dq| and sigma-hat for three held-out snapshots
 
@@ -14,7 +14,7 @@ per-sample predictions shipped with the dataset are used directly.
 
 Usage (from the repository root, after ``make download-reference``)::
 
-    python analysis/uncertainty_figures.py            # writes analysis/output/fig{9,10,E1}.pdf
+    python analysis/uncertainty_figures.py            # writes analysis/output/fig{8,9,E1}.pdf
 
 Environment variables: ``DLAMR_REFDATA`` (default ``reference_data``),
 ``DL_AMR_OUTDIR`` (default ``analysis/output``).
@@ -143,7 +143,7 @@ summary = dict(n_pairs=N, n_points=int(s.size), spearman_absd=rho_absd, spearman
                capture_20pct={k: float(c[i20]) for k, c in CAP.items()}, auc95_by_score=AUC95)
 (OUT / 'uncertainty_summary.json').write_text(json.dumps(summary, indent=1))
 
-# ------------------------------------------------------------------ Fig. 9
+# ------------------------------------------------------------------ Fig. 8
 jf.apply_style('JCP', font_pt=12)
 import matplotlib.pyplot as plt  # noqa: E402
 
@@ -170,10 +170,10 @@ ax.set_title(r'(b) ROC, top $5\%$ of $|\Delta\mathbf{q}|$', fontsize=11.2)
 ax.tick_params(which='both', labelsize=10.2)
 ax.grid(alpha=0.25, lw=0.4)
 ax.legend(frameon=False, loc='lower right', fontsize=10.2, handlelength=1.5, borderaxespad=0.6)
-fig.savefig(OUT / 'fig9.pdf', dpi=500); plt.close(fig)
-print('fig9.pdf saved')
+fig.savefig(OUT / 'fig8.pdf', dpi=500); plt.close(fig)
+print('fig8.pdf saved')
 
-# ------------------------------------------------------------------ Fig. 10
+# ------------------------------------------------------------------ Fig. 9
 jf.apply_style('JCP', font_pt=10.5)
 fig, axes = jf.new_figure_grid('JCP', 1, 2, width='onehalf', aspect=0.48, font_pt=10.5)
 ax = axes[0]
@@ -192,8 +192,8 @@ ax.set_xlabel('high-error quantile (%)', fontsize=10); ax.set_xticks([80, 85, 90
 ax.set_ylabel('AUC', fontsize=10); ax.set_ylim(0.5, 1.0); ax.axhline(0.5, color='0.6', ls='--', lw=0.8)
 for a_, t in zip(axes, ('(a)', '(b)')):
     a_.text(0.02, 0.97, t, transform=a_.transAxes, ha='left', va='top', fontsize=10)
-fig.savefig(OUT / 'fig10.pdf', dpi=500); plt.close(fig)
-print('fig10.pdf saved')
+fig.savefig(OUT / 'fig9.pdf', dpi=500); plt.close(fig)
+print('fig9.pdf saved')
 
 # ------------------------------------------------------------------ Fig. E.1
 en = (Y ** 2).sum(axis=(1, 2, 3))

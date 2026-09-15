@@ -38,9 +38,9 @@ script falls into one of three reproducibility tiers:
 
 | Tier | Figures                 | Data needed                                                    |
 |------|-------------------------|-----------------------------------------------------------------|
-| 2    | Figs 9, 10, E.1         | `make download-reference` (test split + per-sample predictions) |
-| 2    | Figs 4, 5, 8, D.1, F.1  | `make download-fields` (cached time-averaged fields and probes)  |
-| 3    | Figs 3, 6, 7 and all tables | full OpenFOAM case results under `cases/<geom>/<variant>/` |
+| 2    | Figs 8, 9, E.1         | `make download-reference` (test split + per-sample predictions) |
+| 2    | Figs 4, 5, 7, D.1, F.1  | `make download-fields` (cached time-averaged fields and probes)  |
+| 3    | Figs 3, 6 and all tables | full OpenFOAM case results under `cases/<geom>/<variant>/` |
 
 Scripts whose data is absent print a clear `[SKIP]` line and exit with
 code 2 (counted as **skipped**, not failed). See

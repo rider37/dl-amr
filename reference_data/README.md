@@ -5,11 +5,11 @@ Zenodo deposit and the GitHub Release (see [`../docs/data_availability.md`](../d
 
 | Archive | Size | Extracted to | Reproduces |
 |---|---:|---|---|
-| `reference_data_minimal.tar.gz` | ~410 MB | `reference_data/test.pt`, `reference_data/preds/` | Figs. 9, 10, E.1 (`analysis/uncertainty_figures.py`) |
-| `reference_data_fields.tar.gz` | ~65 MB | `reference_data/fields/` | Figs. 4, 5, 8, D.1, F.1 (`analysis/figscripts/`) |
+| `reference_data_minimal.tar.gz` | ~410 MB | `reference_data/test.pt`, `reference_data/preds/` | Figs. 8, 9, E.1 (`analysis/uncertainty_figures.py`) |
+| `reference_data_fields.tar.gz` | ~65 MB | `reference_data/fields/` | Figs. 4, 5, 7, D.1, F.1 (`analysis/figscripts/`) |
 | `pretrained_models.tar.gz` | ~55 MB | `ml/pretrained/` | closed-loop cases (`constant/model.ts`) |
 
-Figures 3, 6 and 7 and the tables additionally need the raw OpenFOAM case results, obtained by
+Figures 3 and 6 and the tables additionally need the raw OpenFOAM case results, obtained by
 running `cases/<geometry>/<variant>/Allrun` or on request from the corresponding author.
 Scripts whose data is not present exit with code **2** ("skipped") and are counted separately
 from real failures by `make figs`.
@@ -26,8 +26,8 @@ make download-artifacts     # all three
 ```
 reference_data/
 ├── README.md                   (this file)
-├── calibration_bins.csv        IN-REPO   calibration bin statistics (Fig. 9a), for reference
-├── roc_auc.csv                 IN-REPO   AUC against the positive-class quantile (Fig. 10b)
+├── calibration_bins.csv        IN-REPO   calibration bin statistics (Fig. 8a), for reference
+├── roc_auc.csv                 IN-REPO   AUC against the positive-class quantile (Fig. 9b)
 ├── uncertainty_report.json     IN-REPO   summary metrics (rho, AUC)
 ├── test.pt                     ARCHIVE   torch.save dict {X, y, mask, meta}
 ├── preds/NNNNN.npz             ARCHIVE   per-sample predictions (pred, mask, aux)
@@ -68,7 +68,7 @@ $|\omega|$, $Q^{+}$).
 |------------------|----------------------------|--------------------------------------|
 | `DLAMR_REFDATA`  | `reference_data/`          | `analysis/uncertainty_figures.py`    |
 | `DLAMR_CACHE`    | `reference_data/fields/`   | `analysis/figscripts/*`              |
-| `DLAMR_CASES`    | `cases/`                   | Figs. 3, 6, 7 and the post-processing pipeline |
+| `DLAMR_CASES`    | `cases/`                   | Figs. 3, 6 and the post-processing pipeline |
 | `DL_AMR_OUTDIR`  | `analysis/output/`         | all figure scripts                   |
 
 ## License

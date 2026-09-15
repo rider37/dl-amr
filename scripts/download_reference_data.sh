@@ -1,8 +1,8 @@
 #!/bin/sh
 # Download the minimal reference data needed by Tier-2 figures
-# (Figs 9, 10, E.1: test.pt and per-sample predictions).
+# (Figs 8, 9, E.1: test.pt and per-sample predictions).
 #
-# Cached wake-field data for Figs 4, 5, 8, D.1, F.1: make download-fields. Raw case results (Figs 3, 6, 7) under
+# Cached wake-field data for Figs 4, 5, 7, D.1, F.1: make download-fields. Raw case results (Figs 3, 6) under
 # cases/<geom>/<method>/, obtained by running ./Allrun. Not in this archive.
 #
 # Tarball layout (extracted at repo root):

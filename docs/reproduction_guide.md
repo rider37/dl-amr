@@ -43,9 +43,9 @@ Each figure falls into one of three reproducibility tiers (see
 
 | Tier | Figures                 | Data source                                                      |
 |------|-------------------------|-------------------------------------------------------------------|
-| 2    | Figs 9, 10, E.1         | `make download-reference` (ML test split + per-sample predictions) |
-| 2    | Figs 4, 5, 8, D.1, F.1  | `make download-fields` (cached time-averaged fields and probes)    |
-| 3    | Figs 3, 6, 7, all tables | full OpenFOAM case results in `cases/<geom>/<variant>/`         |
+| 2    | Figs 8, 9, E.1         | `make download-reference` (ML test split + per-sample predictions) |
+| 2    | Figs 4, 5, 7, D.1, F.1  | `make download-fields` (cached time-averaged fields and probes)    |
+| 3    | Figs 3, 6, all tables | full OpenFOAM case results in `cases/<geom>/<variant>/`         |
 
 ```bash
 make download-artifacts               # pretrained model + both reference-data archives
@@ -63,12 +63,11 @@ clear *[SKIP]* line and exit with code 2 (counted as **skipped**, not failed). O
 Each figure script can also be run individually from the repo root:
 
 ```bash
-python analysis/uncertainty_figures.py          # Figs 9, 10, E.1
+python analysis/uncertainty_figures.py          # Figs 8, 9, E.1
 python analysis/figscripts/make_fig4_D1.py      # Figs 4, D.1
 python analysis/figscripts/make_fig5.py         # Fig 5
-python analysis/figscripts/make_fig8_F1.py      # Figs 8, F.1
+python analysis/figscripts/make_fig7_F1.py      # Figs 7, F.1
 python analysis/figscripts/make_fig3_6.py       # Figs 3, 6   (raw case results)
-python analysis/figscripts/make_fig7.py         # Fig 7       (raw case results)
 ```
 
 The tables are produced by the post-processing pipeline in
