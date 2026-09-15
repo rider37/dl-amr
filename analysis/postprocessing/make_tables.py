@@ -157,11 +157,11 @@ L+=[r'\end{tabular}',r'\end{table}']
 # ── 표 7: 비정상 후류 동역학 ───────────────────────────────────
 L=[r'\begin{table}[!htbp]',r'\centering',r'\small',
    r"\caption{\rev{Unsteady wake diagnostics. $St_f$ and $St_p$ are the shedding frequencies from the lift spectrum and from a wake probe at $(5,0)$, "
-   r"$\mathrm{std}\,U_y'$ the probe cross-stream fluctuation amplitude, $\mathrm{floor}_{C_L}$ the median lift-spectrum power outside "
-   r'the shedding harmonics (remapping-induced force noise), and $\Delta N/N$ the fraction of cells changed per mesh update.}}',
+   r"$\mathrm{std}\,U_y'$ the probe cross-stream fluctuation amplitude, "
+   r'and $\Delta N/N$ the fraction of cells changed per mesh update.}}',
    r'\label{tab:wake-dynamics}',
-   r'\rev{\setlength{\tabcolsep}{3.5pt}\renewcommand{\arraystretch}{0.85}\begin{tabular}{llccccc}',r'\toprule',
-   r"Case & Method & $St_f$ & $St_p$ & $\mathrm{std}\,U_y'$ & $\mathrm{floor}_{C_L}$ & $\Delta N/N$ (\%) \\",
+   r'\rev{\setlength{\tabcolsep}{3.5pt}\renewcommand{\arraystretch}{0.85}\begin{tabular}{llcccc}',r'\toprule',
+   r"Case & Method & $St_f$ & $St_p$ & $\mathrm{std}\,U_y'$ & $\Delta N/N$ (\%) \\",
    r'\midrule']
 for sh,ttl in SH:
     short = ttl.split()[0]
@@ -171,9 +171,8 @@ for sh,ttl in SH:
         sv  = FP[sh]['stdV'] if k=='fine' else d.get('stdV1')
         svs = f'{sv:.4f}' if sv is not None else '---'
         tn  = f'{d["turn"]:.2f}' if 'turn' in d and k not in ('fine','coarse','static') else '0'
-        fl  = f'{d["floor"]:.1e}'.replace('e-0', r'\mathrm{e}{-}').replace('e-', r'\mathrm{e}{-}')
         head = short if i==0 else ''
-        L.append(rf'{head} & {LBL2[k]} & {d["St_f"]:.4f} & {stp} & {svs} & ${fl}$ & {tn} \\')
+        L.append(rf'{head} & {LBL2[k]} & {d["St_f"]:.4f} & {stp} & {svs} & {tn} \\')
     L.append(r'\midrule' if sh!='dia' else r'\bottomrule')
 L+=[r'\end{tabular}}',r'\end{table}']
 (OUT/'wake_dynamics.tex').write_text('\n'.join(L))
