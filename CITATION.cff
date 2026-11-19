@@ -47,6 +47,9 @@ identifiers:
   - type: doi
     value: "10.5281/zenodo.22724267"
     description: "Zenodo version DOI, v1.1.0"
+  - type: doi
+    value: "10.5281/zenodo.24358117"
+    description: "Zenodo version DOI, v1.1.1"
 # Note: this repository is multi-licensed (MIT for Python code, GPL v3 for the
 # OpenFOAM-derived solver, CC-BY 4.0 for data/model/docs). CITATION.cff only
 # accepts a single SPDX identifier, so we declare the primary code license here
