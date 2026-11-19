@@ -38,8 +38,8 @@ preferred-citation:
   year: 2026
   doi: "10.xxxx/yyyy"  # TODO: replace with the journal-issued DOI after JCP publication
 repository-code: "https://github.com/rider37/dl-amr"
-version: 1.1.0
-date-released: 2026-09-12
+version: 1.1.1
+date-released: 2026-11-19
 identifiers:
   - type: doi
     value: "10.5281/zenodo.19870610"
