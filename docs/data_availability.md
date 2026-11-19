@@ -96,4 +96,8 @@ DOI: 10.xxxx/yyyy   # TODO: replace after JCP publication
 Software DOI (Zenodo, concept — always resolves to the latest archived
 version of the deposit): 10.5281/zenodo.19870610
 Version DOI of the release matching the revised manuscript (v1.1.0): 10.5281/zenodo.22724267
+Version DOI of the release with the Gauss linear convection scheme (v1.1.1): 10.5281/zenodo.24358117
+The binary artifacts (pretrained_models.tar.gz, reference_data_minimal.tar.gz,
+reference_data_fields.tar.gz) are deposited with the v1.1.0 record and are not
+duplicated in later records.
 ```
